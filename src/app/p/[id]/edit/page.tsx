@@ -173,14 +173,7 @@ export default function EditorPage() {
               <span className="font-mono uppercase text-xs tracking-wide">Subtotal</span>
               <MoneyDisplay amount={subtotal} size="sm" color="muted" />
             </div>
-            {project.tax_rate > 0 && (
-              <div className="flex justify-between text-sm text-tinta-pudar">
-                <span className="font-mono uppercase text-xs tracking-wide">
-                  PPN {Math.round(project.tax_rate * 100)}%
-                </span>
-                <MoneyDisplay amount={settlement.total_tax} size="sm" color="muted" />
-              </div>
-            )}
+
             <div className="flex justify-between items-center pt-2 border-t border-dashed border-tinta/15">
               <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">Total</span>
               <MoneyDisplay amount={settlement.total_expense} size="lg" className="font-bold" />

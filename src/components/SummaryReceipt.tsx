@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { formatRupiahShort, useTranslation } from '@/i18n';
 import type { Item, Person, PersonBalance, Transaction } from '@/lib/types';
@@ -133,14 +133,7 @@ export function SummaryReceipt({
           <span className="font-mono uppercase text-xs tracking-wide">{t.editor.subtotalRow}</span>
           <MoneyDisplay amount={subtotalItems} size="sm" color="muted" />
         </div>
-        {taxRate > 0 && (
-          <div className="flex justify-between text-sm text-tinta-pudar">
-            <span className="font-mono uppercase text-xs tracking-wide">
-              {t.editor.taxRow} {Math.round(taxRate * 100)}%
-            </span>
-            <MoneyDisplay amount={totalTax} size="sm" color="muted" />
-          </div>
-        )}
+
         <div className="flex justify-between items-center pt-1 border-t border-tinta/20">
           <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">
             {t.editor.totalRow}

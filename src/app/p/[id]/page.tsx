@@ -146,7 +146,7 @@ export default function SummaryPage() {
             onClick={handleCopyLink}
             id="share-link-btn"
           >
-            🔗 Bagikan Ringkasan Ini
+            {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
           </Button>
         </div>
       </div>
