@@ -23,6 +23,10 @@ const en = {
     startBtn: 'Start Calculating',
     minPersonsError: 'At least 2 people needed for splitting.',
     emptyTitleError: 'Event name is required.',
+    pinLabel: 'Edit Access PIN',
+    pinPlaceholder: '4 digits, e.g. 1234',
+    pinHint: 'This PIN is required if you or a friend wants to edit the order later.',
+    invalidPinError: 'PIN must be 4 digits.',
   },
 
   editor: {
@@ -44,6 +48,11 @@ const en = {
     subtotalRow: 'Subtotal',
     totalRow: 'Total',
     personSectionTitle: 'Participants',
+    pinModalTitle: 'Edit Access Locked',
+    pinModalDesc: 'Enter the 4-digit PIN to edit this order.',
+    pinModalPlaceholder: 'PIN (4 digits)',
+    pinModalSubmit: 'Unlock',
+    pinModalError: 'Incorrect PIN. Please try again.',
   },
 
   summary: {

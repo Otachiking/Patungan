@@ -102,101 +102,101 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
         ref={scrollRef}
         className="flex gap-4 overflow-x-auto px-5 pb-5 pt-5 scrollbar-hide snap-x"
       >
-      {persons.map((person, i) => {
-        const isEditing = editingId === person.id;
-        
-        return (
-          <div 
-            key={person.id}
-            className="group shrink-0 flex flex-col items-center gap-2 snap-center relative w-16"
-            onMouseEnter={() => setHoveredId(person.id)}
-            onMouseLeave={() => setHoveredId(null)}
-            onTouchStart={() => setHoveredId(person.id === hoveredId ? null : person.id)}
-          >
+        {persons.map((person, i) => {
+          const isEditing = editingId === person.id;
+          
+          return (
             <div 
-              className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-xl text-white shadow-sm"
-              style={{ backgroundColor: getAvatarColor(i) }}
+              key={person.id}
+              className="group shrink-0 flex flex-col items-center gap-2 snap-center relative w-12 md:w-16"
+              onMouseEnter={() => setHoveredId(person.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              onTouchStart={() => setHoveredId(person.id === hoveredId ? null : person.id)}
             >
-              {getInitials(person.name)}
+              <div 
+                className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm"
+                style={{ backgroundColor: getAvatarColor(i) }}
+              >
+                {getInitials(person.name)}
+              </div>
+              
+              {isEditing ? (
+                <input
+                  className="w-20 text-center text-xs border border-tinta/30 outline-none rounded bg-white text-tinta absolute top-10 md:top-14 z-10 shadow-sm"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleRename(person.id);
+                    if (e.key === 'Escape') setEditingId(null);
+                  }}
+                  onBlur={() => handleRename(person.id)}
+                  autoFocus
+                />
+              ) : (
+                <div className="h-4 flex items-center justify-center w-full relative">
+                  <span className={`text-sm font-medium text-tinta truncate max-w-full absolute transition-opacity duration-150 ${hoveredId === person.id && !readOnly ? 'opacity-0' : 'opacity-100'}`}>
+                    {person.name}
+                  </span>
+                  
+                  {!readOnly && (
+                    <div className={`flex items-center gap-1 text-xs text-tinta-pudar transition-opacity absolute ${hoveredId === person.id ? 'opacity-100' : 'opacity-0'}`}>
+                      <button 
+                        onClick={() => { setEditingId(person.id); setEditName(person.name); }}
+                        className="hover:text-tinta transition-colors"
+                        title={t.common.edit}
+                      >
+                        ✏️
+                      </button>
+                      <span className="text-[10px] text-tinta/20">|</span>
+                      <button 
+                        onClick={() => handleDeleteWithWarning(person)}
+                        className="hover:text-red-500 transition-colors"
+                        title={t.common.delete}
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
+          );
+        })}
+
+        {/* Add New Button */}
+        {!readOnly && (
+          <div className="shrink-0 flex flex-col items-center gap-2 snap-center relative w-12 md:w-16">
+            <button
+              onClick={startAddPerson}
+              className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
+              title="Tambah Peserta"
+            >
+              +
+            </button>
             
-            {isEditing ? (
+            {editingId === 'new' ? (
               <input
-                className="w-20 text-center text-xs border border-tinta/30 outline-none rounded bg-white text-tinta absolute top-16 z-10"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
+                className="w-20 text-center text-xs border border-tinta/30 outline-none rounded bg-white text-tinta absolute top-10 md:top-14 z-10 shadow-sm"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleRename(person.id);
+                  if (e.key === 'Enter') handleAdd();
                   if (e.key === 'Escape') setEditingId(null);
                 }}
-                onBlur={() => handleRename(person.id)}
+                onBlur={() => { if (newName.trim()) handleAdd(); else setEditingId(null); }}
                 autoFocus
+                placeholder="Nama"
               />
             ) : (
-              <div className="h-4 flex items-center justify-center w-full relative">
-                <span className={`text-sm font-medium text-tinta truncate max-w-full absolute transition-opacity duration-150 ${hoveredId === person.id && !readOnly ? 'opacity-0' : 'opacity-100'}`}>
-                  {person.name}
+              <div className="h-4 flex items-center justify-center w-full cursor-pointer hover:opacity-70 transition-opacity" onClick={startAddPerson}>
+                <span className="text-xs md:text-sm font-medium text-tinta/40 truncate max-w-full">
+                  Tambah
                 </span>
-                
-                {!readOnly && (
-                  <div className={`flex items-center gap-1 text-xs text-tinta-pudar transition-opacity absolute ${hoveredId === person.id ? 'opacity-100' : 'opacity-0'}`}>
-                    <button 
-                      onClick={() => { setEditingId(person.id); setEditName(person.name); }}
-                      className="hover:text-tinta transition-colors"
-                      title={t.common.edit}
-                    >
-                      ✏️
-                    </button>
-                    <span className="text-[10px] text-tinta/20">|</span>
-                    <button 
-                      onClick={() => handleDeleteWithWarning(person)}
-                      className="hover:text-red-500 transition-colors"
-                      title={t.common.delete}
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                )}
               </div>
             )}
           </div>
-        );
-      })}
-
-      {/* Add New Button */}
-      {!readOnly && (
-        <div className="shrink-0 flex flex-col items-center gap-2 snap-center w-16 relative">
-          <button
-            onClick={startAddPerson}
-            className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
-            title="Tambah Peserta"
-          >
-            +
-          </button>
-          
-          {editingId === 'new' ? (
-            <input
-              className="w-20 text-center text-xs border border-tinta/30 outline-none rounded bg-white text-tinta absolute top-16 z-10"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleAdd();
-                if (e.key === 'Escape') setEditingId(null);
-              }}
-              onBlur={() => { if (newName.trim()) handleAdd(); else setEditingId(null); }}
-              autoFocus
-              placeholder="Nama"
-            />
-          ) : (
-            <div className="h-4 flex items-center justify-center w-full">
-              <span className="text-sm font-medium text-tinta truncate max-w-full">
-                Tambah
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </div>
   );
 }

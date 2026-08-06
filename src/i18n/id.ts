@@ -36,7 +36,7 @@ const id = {
     addItemBtn: 'Tambah Item',
     itemNameLabel: 'Nama Item',
     itemNamePlaceholder: 'Contoh: Nasi Goreng',
-    itemPriceLabel: 'Harga',
+    itemPriceLabel: 'Harga Satuan',
     itemPricePlaceholder: '0',
     paidByLabel: 'Dibayar oleh',
     participantsLabel: 'Siapa yang menanggung?',

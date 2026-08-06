@@ -314,16 +314,18 @@ export default function EditorPage() {
 
       {/* Undo Toast */}
       {lastDeleted && pendingDeletes.has(lastDeleted.id) && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-tinta text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-4 z-50 animate-fade-up">
-          <span className="text-sm font-medium">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-tinta text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-4 z-50 animate-fade-up overflow-hidden">
+          <span className="text-sm font-medium z-10">
             {lastDeleted.type === 'person' ? 'Peserta' : 'Item'} <span className="font-bold">"{lastDeleted.name}"</span> dihapus.
           </span>
           <button 
             onClick={() => handleUndo(lastDeleted.id)}
-            className="text-sm font-bold text-stamp hover:text-stamp-light underline decoration-2 underline-offset-2 transition-colors"
+            className="text-sm font-bold text-stamp hover:text-stamp-light underline decoration-2 underline-offset-2 transition-colors z-10"
           >
             Undo
           </button>
+          {/* Progress bar */}
+          <div className="absolute bottom-0 left-0 h-1 bg-white/20 w-full animate-shrink-x origin-left" />
         </div>
       )}
     </main>

@@ -56,29 +56,11 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
         const payer = personMap[item.paid_by_person_id];
         const payerIndex = personIndex[item.paid_by_person_id] ?? 0;
 
-        if (editingId === item.id) {
-          return (
-            <ItemForm
-              key={item.id}
-              persons={persons}
-              initialItem={item}
-              onSave={async (data, participants) => {
-                await onSave(data, participants);
-                setEditingId(null);
-              }}
-              onCancel={() => setEditingId(null)}
-              projectId={projectId}
-            />
-          );
-        }
-
         return (
           <div
             key={item.id}
-            className={`bg-white rounded-2xl border p-4 transition-all duration-150 ${hoveredId === item.id ? 'border-tinta/25' : 'border-tinta/10'}`}
-            onMouseEnter={() => setHoveredId(item.id)}
-            onMouseLeave={() => setHoveredId(null)}
-            onTouchStart={() => setHoveredId(item.id === hoveredId ? null : item.id)}
+            className={`bg-white rounded-2xl border p-4 transition-all duration-150 border-tinta/10 ${!readOnly ? 'hover:border-tinta/25 cursor-pointer active:scale-[0.98]' : ''}`}
+            onClick={() => !readOnly && setEditingId(item.id)}
           >
             {/* Top row: name + price (desktop only for price) */}
             <div className="flex items-start justify-between gap-3">
@@ -127,60 +109,23 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
                 </div>
               </div>
 
-              {/* Right: per-person price + total price (mobile) + actions (swap on hover/tap) */}
+              {/* Right: per-person price + total price (mobile) */}
               <div className="relative flex items-center justify-between sm:justify-end shrink-0 h-8 mt-1 sm:mt-0">
                 {item.participants.length > 0 && (
-                  <p className={`text-xs text-tinta-pudar font-mono transition-opacity duration-200 ${hoveredId === item.id && !readOnly ? 'opacity-0' : 'opacity-100'} sm:absolute sm:right-0 whitespace-nowrap`}>
+                  <p className="text-xs text-tinta-pudar font-mono sm:absolute sm:right-0 whitespace-nowrap">
                     ≈ Rp{Math.ceil((item.price * (item.qty ?? 1)) / item.participants.length).toLocaleString('id-ID')} / orang
                   </p>
                 )}
                 
                 {/* Mobile price (hidden on desktop) */}
-                <div className={`sm:hidden transition-opacity duration-200 ${hoveredId === item.id && !readOnly ? 'opacity-0' : 'opacity-100'}`}>
+                <div className="sm:hidden">
                   <MoneyDisplay amount={item.price * (item.qty ?? 1)} size="md" />
                 </div>
-
-                {!readOnly && (
-                  <div className={`flex gap-1.5 transition-opacity duration-200 absolute right-0 bg-white pl-2 py-0.5 ${hoveredId === item.id ? 'opacity-100' : 'opacity-0'}`}>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setEditingId(item.id)}
-                      id={`edit-item-${item.id}`}
-                      className="h-8 py-0 text-xs px-3 bg-transparent border-0"
-                    >
-                      ✏️ Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => handleDelete(item.id)}
-                      loading={deletingId === item.id}
-                      id={`delete-item-${item.id}`}
-                      className="h-8 py-0 text-xs px-3"
-                    >
-                      🗑️ Hapus
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         );
       })}
-
-      {/* Add form inline */}
-      {showAddForm && (
-        <ItemForm
-          persons={persons}
-          onSave={async (data, participants) => {
-            await onSave(data, participants);
-            setShowAddForm(false);
-          }}
-          onCancel={() => setShowAddForm(false)}
-          projectId={projectId}
-        />
-      )}
 
       {/* Subtotal row */}
       {items.length > 0 && (
@@ -206,6 +151,53 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
           ＋ {t.editor.addItemBtn}
         </Button>
       )}
+
+      {/* Edit/Add Modal */}
+      {(editingId || showAddForm) && !readOnly && (() => {
+        const itemToEdit = editingId ? items.find(i => i.id === editingId) : undefined;
+        return (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 bg-tinta/40 backdrop-blur-sm animate-fade-in">
+            <div className="bg-[#EDE9DF] w-full max-w-md rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+              <div className="p-5 sm:p-6">
+                <div className="flex justify-between items-center mb-5">
+                  <h3 className="font-display font-semibold text-tinta text-lg">
+                    {itemToEdit ? 'Edit Item' : t.editor.addItemBtn}
+                  </h3>
+                  {itemToEdit && (
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={async () => {
+                        await handleDelete(itemToEdit.id);
+                        setEditingId(null);
+                      }}
+                      loading={deletingId === itemToEdit.id}
+                      className="h-8 py-0 text-xs px-3"
+                    >
+                      🗑️ Hapus
+                    </Button>
+                  )}
+                </div>
+                
+                <ItemForm
+                  persons={persons}
+                  initialItem={itemToEdit}
+                  onSave={async (data, participants) => {
+                    await onSave(data, participants);
+                    setEditingId(null);
+                    setShowAddForm(false);
+                  }}
+                  onCancel={() => {
+                    setEditingId(null);
+                    setShowAddForm(false);
+                  }}
+                  projectId={projectId}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

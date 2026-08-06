@@ -71,26 +71,15 @@ export default function SummaryPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
-          <Link href="/" className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono">
-            ← {t.common.back}
-          </Link>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={handleCopyLink}
-              id="copy-link-btn"
-            >
-              {copied ? `✓ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
-            </Button>
-            {canEdit && (
-              <Link href={`/p/${id}/edit`}>
-                <Button size="sm" variant="secondary" id="edit-event-btn">
-                  ✏️ {t.summary.editBtn}
-                </Button>
-              </Link>
-            )}
-          </div>
+          {canEdit ? (
+            <Link href={`/p/${id}/edit`} className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium">
+              ← ✏️ Edit Acara
+            </Link>
+          ) : (
+            <Link href="/" className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium">
+              ← {t.common.back}
+            </Link>
+          )}
         </div>
       </header>
 
@@ -129,10 +118,10 @@ export default function SummaryPage() {
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-col gap-3">
+        <div className="mt-8 flex flex-col gap-4">
           {canEdit && !showStamp && (
             <Button
-              variant="secondary"
+              variant="ghost"
               fullWidth
               onClick={handleFinalize}
               id="finalize-btn"
@@ -140,14 +129,25 @@ export default function SummaryPage() {
               🔒 {t.summary.finalizeBtn}
             </Button>
           )}
-          <Button
-            variant="ghost"
-            fullWidth
-            onClick={handleCopyLink}
-            id="share-link-btn"
-          >
-            {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
-          </Button>
+          
+          <div className="flex items-center gap-3">
+            {canEdit && (
+              <Link href={`/p/${id}/edit`} className="flex-1">
+                <Button variant="secondary" fullWidth id="edit-event-bottom-btn">
+                  ✏️ Edit Acara
+                </Button>
+              </Link>
+            )}
+            <Button
+              variant="secondary"
+              fullWidth
+              className="flex-1"
+              onClick={handleCopyLink}
+              id="share-link-btn"
+            >
+              {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
+            </Button>
+          </div>
         </div>
       </div>
     </main>
