@@ -1,10 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from '@/i18n';
 import { createProject } from '@/lib/db';
 import { storeEditToken } from '@/lib/db';
+import { getInitials, getAvatarColor } from '@/lib/avatar';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
@@ -14,26 +15,25 @@ export default function LandingPage() {
 
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [personNames, setPersonNames] = useState(['', '']);
+  const [personsInput, setPersonsInput] = useState('');
+
   const [errors, setErrors] = useState<{ title?: string; persons?: string; global?: string }>({});
   const [loading, setLoading] = useState(false);
 
-  function addPerson() {
-    setPersonNames((prev) => [...prev, '']);
+  function getValidNames() {
+    return personsInput
+      .split(',')
+      .map((n) => n.trim())
+      .filter((n) => n.length > 0);
   }
 
-  function removePerson(i: number) {
-    setPersonNames((prev) => prev.filter((_, idx) => idx !== i));
-  }
-
-  function updatePerson(i: number, val: string) {
-    setPersonNames((prev) => prev.map((n, idx) => (idx === i ? val : n)));
-  }
+  const currentNames = getValidNames();
+  const displayNames = Array.from({ length: Math.max(3, currentNames.length) }, (_, i) => currentNames[i] || '');
 
   function validate() {
     const errs: typeof errors = {};
     if (!title.trim()) errs.title = t.landing.emptyTitleError;
-    const validNames = personNames.filter((n) => n.trim());
+    const validNames = getValidNames();
     if (validNames.length < 2) errs.persons = t.landing.minPersonsError;
     return errs;
   }
@@ -48,13 +48,15 @@ export default function LandingPage() {
     setLoading(true);
 
     try {
-      const validNames = personNames.filter((n) => n.trim());
+      const validNames = getValidNames();
+      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString();
 
       const project = await createProject({
         title: title.trim(),
         currency: 'IDR',
         tax_rate: 0,
         person_names: validNames,
+        pin: generatedPin,
       });
 
       storeEditToken(project.id, project.edit_token);
@@ -94,6 +96,7 @@ export default function LandingPage() {
           onChange={(e) => setTitle(e.target.value)}
           error={errors.title}
           id="event-title-input"
+          autoFocus
         />
 
         {/* Date */}
@@ -105,51 +108,42 @@ export default function LandingPage() {
           id="event-date-input"
         />
 
-        {/* Tax rate (removed for MVP) */}
-
         {/* Persons */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <label className="text-sm font-medium text-tinta">{t.landing.participantsLabel}</label>
-          <div className="space-y-2">
-            {personNames.map((name, i) => (
-              <div key={i} className="flex gap-2 items-center animate-slide-in">
-                <input
-                  id={`person-name-${i}`}
-                  type="text"
-                  placeholder={`${t.landing.personNamePlaceholder} ${i + 1}`}
-                  value={name}
-                  onChange={(e) => updatePerson(i, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') addPerson();
-                  }}
-                  className="flex-1 border rounded-xl px-3 py-2.5 text-tinta bg-white
-                             placeholder:text-tinta-pudar/50 border-tinta/20
-                             focus:outline-none focus:ring-2 focus:ring-stamp/30 focus:border-stamp
-                             transition-all duration-150 text-sm"
-                />
-                {personNames.length > 2 && (
-                  <button
-                    type="button"
-                    onClick={() => removePerson(i)}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg text-tinta-pudar
-                               hover:text-red-600 hover:bg-red-50 transition-colors text-sm"
-                    title="Hapus"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            ))}
+          
+          {/* Avatars */}
+          <div className="flex gap-2 justify-center items-center overflow-x-auto mt-4 pb-2 scrollbar-hide snap-x">
+            {displayNames.map((name, i) => {
+              const hasName = name.trim().length > 0;
+              const initials = hasName ? getInitials(name) : String.fromCharCode(65 + i);
+              const color = hasName ? getAvatarColor(i) : undefined;
+              
+              return (
+                <div 
+                  key={i} 
+                  className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg snap-center
+                    ${hasName ? 'text-white shadow-sm' : 'bg-tinta/10 text-white'}`}
+                  style={hasName ? { backgroundColor: color } : {}}
+                >
+                  {initials}
+                </div>
+              );
+            })}
           </div>
+
+          <textarea
+            id="persons-input"
+            rows={2}
+            placeholder="Tulis nama dan gunakan tanda koma (,) untuk peserta selanjutnya"
+            value={personsInput}
+            onChange={(e) => setPersonsInput(e.target.value)}
+            className="w-full border rounded-xl px-3 py-2.5 text-tinta bg-white
+                       placeholder:text-tinta-pudar/50 border-tinta/20
+                       focus:outline-none focus:ring-2 focus:ring-stamp/30 focus:border-stamp
+                       transition-all duration-150 text-sm resize-none"
+          />
           {errors.persons && <p className="text-xs text-red-600">{errors.persons}</p>}
-          <button
-            type="button"
-            onClick={addPerson}
-            id="add-person-landing-btn"
-            className="text-sm text-stamp hover:text-stamp-dark font-medium flex items-center gap-1 transition-colors"
-          >
-            + {t.landing.addPersonBtn}
-          </button>
         </div>
 
         {/* Global error */}

@@ -25,6 +25,10 @@ const id = {
     startBtn: 'Mulai Hitung',
     minPersonsError: 'Minimal 2 orang untuk patungan.',
     emptyTitleError: 'Nama acara wajib diisi.',
+    pinLabel: 'PIN Akses Edit',
+    pinPlaceholder: '4 angka, contoh: 1234',
+    pinHint: 'PIN ini diperlukan jika kamu atau temanmu ingin mengedit pesanan nantinya.',
+    invalidPinError: 'PIN harus 4 angka.',
   },
 
   // ─── Editor page ──────────────────────────────────────────────────────────
@@ -47,6 +51,11 @@ const id = {
     subtotalRow: 'Subtotal',
     totalRow: 'Total',
     personSectionTitle: 'Peserta',
+    pinModalTitle: 'Akses Edit Terkunci',
+    pinModalDesc: 'Masukkan PIN 4 angka untuk mengedit pesanan ini.',
+    pinModalPlaceholder: 'PIN (4 angka)',
+    pinModalSubmit: 'Buka Kunci',
+    pinModalError: 'PIN salah. Coba lagi.',
   },
 
   // ─── Summary / Settlement page ────────────────────────────────────────────

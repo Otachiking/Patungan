@@ -6,6 +6,7 @@ export interface Project {
   date: string; // ISO date string
   share_slug: string;
   edit_token: string;
+  pin?: string;
   currency: string; // default "IDR"
   tax_rate: number; // e.g. 0.11 for 11%
   created_at: string;
@@ -28,6 +29,7 @@ export interface Item {
   project_id: string;
   name: string;
   price: number; // in smallest currency unit (Rupiah, integer)
+  qty: number;
   paid_by_person_id: string;
   participants: ItemParticipant[];
   order: number;
@@ -70,6 +72,7 @@ export type CreateProjectInput = {
   currency?: string;
   tax_rate?: number;
   person_names: string[];
+  pin?: string;
 };
 
 export type UpsertItemInput = Omit<Item, 'id' | 'created_at' | 'participants'> & { id?: string };

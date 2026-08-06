@@ -25,6 +25,7 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectW
       title: input.title,
       currency: input.currency ?? 'IDR',
       tax_rate: input.tax_rate ?? 0,
+      pin: input.pin ?? Math.floor(1000 + Math.random() * 9000).toString(),
     })
     .select()
     .single();
@@ -165,7 +166,12 @@ export function storeEditToken(projectId: string, token: string): void {
   localStorage.setItem(`edit_token_${projectId}`, token);
 }
 
+export function removeStoredEditToken(projectId: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(`edit_token_${projectId}`);
+}
+
 export function verifyEditToken(project: Project, token: string | null): boolean {
   if (!token) return false;
-  return project.edit_token === token;
+  return project.edit_token === token || project.pin === token;
 }

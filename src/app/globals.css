@@ -5,18 +5,39 @@
 
 @theme inline {
   /* Color palette — nota/struk warung */
-  --color-kertas:      #F7F4EC;   /* Background utama, seperti kertas nota */
-  --color-tinta:       #2A2A25;   /* Teks utama */
-  --color-tinta-pudar: #6B685D;   /* Teks sekunder/caption */
-  --color-stamp:       #B23A2E;   /* Aksen utama/CTA — warna tinta stempel */
-  --color-stamp-dark:  #8f2d23;   /* Hover state stempel */
-  --color-lunas:       #3F7D5C;   /* Status "kamu akan menerima" */
-  --color-utang:       #C48A2E;   /* Status "kamu harus bayar" */
+  --color-kertas: #F7F4EC;
+  /* Background utama, seperti kertas nota */
+  --color-tinta: #2A2A25;
+  /* Teks utama */
+  --color-tinta-pudar: #6B685D;
+  /* Teks sekunder/caption */
+  --color-stamp: #B23A2E;
+  /* Aksen utama/CTA — warna tinta stempel */
+  --color-stamp-dark: #8f2d23;
+  /* Hover state stempel */
+  --color-lunas: #3F7D5C;
+  /* Status "kamu akan menerima" */
+  --color-utang: #C48A2E;
+  /* Status "kamu harus bayar" */
 
   /* Typography */
   --font-display: 'Space Grotesk', sans-serif;
-  --font-body:    'Plus Jakarta Sans', sans-serif;
-  --font-mono:    'IBM Plex Mono', monospace;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+:root {
+  /* Avatar Palette (10 colors) */
+  --color-ptptlah-red: #EF4444;
+  --color-ptptlah-orange: #F97316;
+  --color-ptptlah-yellow: #EAB308;
+  --color-ptptlah-lime: #84CC16;
+  --color-ptptlah-green: #22C55E;
+  --color-ptptlah-cyan: #06B6D4;
+  --color-ptptlah-blue: #3B82F6;
+  --color-ptptlah-indigo: #6366F1;
+  --color-ptptlah-purple: #A855F7;
+  --color-ptptlah-pink: #EC4899;
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────────────────── */
@@ -30,7 +51,8 @@ html {
 }
 
 body {
-  background-color: #EDE9DF; /* slightly darker than kertas for page bg */
+  background-color: #EDE9DF;
+  /* slightly darker than kertas for page bg */
   color: #2A2A25;
   font-family: 'Plus Jakarta Sans', sans-serif;
   line-height: 1.6;
@@ -39,9 +61,17 @@ body {
 
 /* ─── Typography Utilities ────────────────────────────────────────────────── */
 
-.font-display { font-family: 'Space Grotesk', sans-serif; }
-.font-body    { font-family: 'Plus Jakarta Sans', sans-serif; }
-.font-mono    { font-family: 'IBM Plex Mono', monospace; }
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
 
 /* ─── Custom Scrollbar ────────────────────────────────────────────────────── */
 
@@ -49,30 +79,63 @@ body {
   width: 6px;
   height: 6px;
 }
-::-webkit-scrollbar-track { background: transparent; }
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #2A2A2520;
   border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover { background: #2A2A2540; }
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2A2A2540;
+}
 
 /* ─── Stamp Animation (§12 LUNAS moment) ─────────────────────────────────── */
 
 @keyframes stamp-drop {
-  0%   { opacity: 0; transform: scale(2) rotate(-15deg); }
-  40%  { opacity: 1; transform: scale(0.92) rotate(3deg); }
-  60%  { transform: scale(1.04) rotate(-1deg); }
-  80%  { transform: scale(0.98) rotate(0.5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  0% {
+    opacity: 0;
+    transform: scale(2) rotate(-15deg);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(0.92) rotate(3deg);
+  }
+
+  60% {
+    transform: scale(1.04) rotate(-1deg);
+  }
+
+  80% {
+    transform: scale(0.98) rotate(0.5deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
-.animate-stamp { animation: stamp-drop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.animate-stamp {
+  animation: stamp-drop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
 
 /* ─── Micro-interactions ──────────────────────────────────────────────────── */
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-up {
@@ -80,8 +143,15 @@ body {
 }
 
 @keyframes slide-in {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .animate-slide-in {

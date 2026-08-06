@@ -80,9 +80,10 @@ export function calculateBalances(
 
   // Accumulate per-item contributions
   for (const item of items) {
+    const itemTotal = item.price * (item.qty ?? 1);
     // Always track who paid for this item, even if no one shoulders it
     if (item.paid_by_person_id in paid) {
-      paid[item.paid_by_person_id] += item.price;
+      paid[item.paid_by_person_id] += itemTotal;
     }
 
     if (item.participants.length === 0) continue;
@@ -93,7 +94,7 @@ export function calculateBalances(
     for (const participant of item.participants) {
       if (!(participant.person_id in rawSubtotals)) continue;
       rawSubtotals[participant.person_id] +=
-        item.price * (participant.weight / totalWeight);
+        itemTotal * (participant.weight / totalWeight);
     }
   }
 
@@ -101,7 +102,7 @@ export function calculateBalances(
   // Only count items WITH participants — items with no participants have 0 expense for everyone
   const participatedItemsTotal = items
     .filter((i) => i.participants.length > 0 && i.participants.reduce((s, p) => s + p.weight, 0) > 0)
-    .reduce((s, i) => s + i.price, 0);
+    .reduce((s, i) => s + i.price * (i.qty ?? 1), 0);
   const subtotals = applyLargestRemainder(rawSubtotals, participatedItemsTotal);
 
   // §7: Proportional tax distribution
