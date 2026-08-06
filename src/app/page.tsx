@@ -3,22 +3,27 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/i18n';
-import { createProject } from '@/lib/db';
-import { storeEditToken } from '@/lib/db';
+import { createProject, storeEditToken, saveToHistory, getHistory, type HistoryEntry } from '@/lib/db';
 import { getInitials, getAvatarColor } from '@/lib/avatar';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import Link from 'next/link';
 
 export default function LandingPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [personsInput, setPersonsInput] = useState('');
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   const [errors, setErrors] = useState<{ title?: string; persons?: string; global?: string }>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setHistory(getHistory());
+  }, []);
 
   function getValidNames() {
     return personsInput
@@ -60,6 +65,16 @@ export default function LandingPage() {
       });
 
       storeEditToken(project.id, project.edit_token);
+
+      // Save to local history
+      saveToHistory({
+        id: project.id,
+        title: project.title,
+        date: project.date ?? new Date().toISOString().split('T')[0],
+        personCount: validNames.length,
+        createdAt: new Date().toISOString(),
+      });
+
       router.push(`/p/${project.id}/edit`);
     } catch (e) {
       console.error(e);
@@ -70,7 +85,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#EDE9DF] flex flex-col items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-[#EDE9DF] flex flex-col items-center px-4 py-12">
       {/* Hero */}
       <div className="text-center mb-10 animate-fade-up">
         <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-stamp/10 rounded-full border border-stamp/20">
@@ -135,7 +150,9 @@ export default function LandingPage() {
           <textarea
             id="persons-input"
             rows={2}
-            placeholder="Tulis nama dan gunakan tanda koma (,) untuk peserta selanjutnya"
+            placeholder={locale === 'id'
+              ? 'Tulis nama dan gunakan tanda koma (,) untuk peserta selanjutnya'
+              : 'Type names separated by commas (,)'}
             value={personsInput}
             onChange={(e) => setPersonsInput(e.target.value)}
             className="w-full border rounded-xl px-3 py-2.5 text-tinta bg-white
@@ -163,10 +180,45 @@ export default function LandingPage() {
         </Button>
       </div>
 
-      {/* Bottom tagline */}
-      <p className="mt-8 text-xs text-tinta-pudar font-mono text-center">
-        Gratis · Tanpa akun · Open source
-      </p>
+      {/* History */}
+      {history.length > 0 && (
+        <div className="w-full max-w-md mt-8 animate-fade-up">
+          <h2 className="text-sm font-semibold text-tinta-pudar font-mono uppercase tracking-wide mb-3 px-1">
+            {t.history.title}
+          </h2>
+          <div className="space-y-2 max-h-64 overflow-y-auto pr-1 scrollbar-hide">
+            {history.map((entry) => (
+              <Link
+                key={entry.id}
+                href={`/p/${entry.id}`}
+                className="block bg-kertas rounded-2xl border border-tinta/10 hover:border-tinta/25 hover:shadow-sm transition-all duration-150 px-4 py-3"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-tinta text-sm truncate">{entry.title}</p>
+                    <p className="text-xs text-tinta-pudar font-mono mt-0.5">
+                      {entry.personCount} {t.history.persons}
+                      {' · '}
+                      {new Date(entry.date + 'T00:00:00').toLocaleDateString(
+                        locale === 'id' ? 'id-ID' : 'en-US',
+                        { day: 'numeric', month: 'short', year: 'numeric' }
+                      )}
+                    </p>
+                  </div>
+                  <span className="text-tinta-pudar/40 text-sm shrink-0">→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="mt-10 text-center space-y-1">
+        <p className="text-xs text-tinta-pudar font-mono opacity-70">{t.footer.tagline}</p>
+        <p className="text-xs text-tinta-pudar font-mono opacity-40">{t.footer.madeWith} PtPtLah</p>
+      </div>
     </main>
   );
 }
+

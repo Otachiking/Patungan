@@ -74,7 +74,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
             <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-2">
               {/* Left: Payer + Ditanggung */}
               <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                <span className="text-xs text-tinta-pudar shrink-0">Dibayar:</span>
+                <span className="text-xs text-tinta-pudar shrink-0">{t.editor.paidByShort}:</span>
                 {payer && (
                   <span
                     className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded shadow-sm shrink-0"
@@ -85,7 +85,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
                   </span>
                 )}
                 <span className="text-tinta/30 text-xs mx-0.5 shrink-0">|</span>
-                <span className="text-xs text-tinta-pudar shrink-0">Ditanggung:</span>
+                <span className="text-xs text-tinta-pudar shrink-0">{t.editor.sharedByShort}:</span>
                 <div className="flex gap-1 items-center flex-wrap">
                   {item.participants.slice(0, 3).map((p) => {
                     const person = personMap[p.person_id];
@@ -113,7 +113,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
               <div className="relative flex items-center justify-between sm:justify-end shrink-0 h-8 mt-1 sm:mt-0">
                 {item.participants.length > 0 && (
                   <p className="text-xs text-tinta-pudar font-mono sm:absolute sm:right-0 whitespace-nowrap">
-                    ≈ Rp{Math.ceil((item.price * (item.qty ?? 1)) / item.participants.length).toLocaleString('id-ID')} / orang
+                    ≈ Rp{Math.ceil((item.price * (item.qty ?? 1)) / item.participants.length).toLocaleString('id-ID')} / {t.editor.perPersonShort}
                   </p>
                 )}
                 
@@ -156,8 +156,8 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
       {(editingId || showAddForm) && !readOnly && (() => {
         const itemToEdit = editingId ? items.find(i => i.id === editingId) : undefined;
         return (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 bg-tinta/40 backdrop-blur-sm animate-fade-in">
-            <div className="bg-[#EDE9DF] w-full max-w-md rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+          <div className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-stretch sm:items-center bg-tinta/40 backdrop-blur-sm animate-fade-in">
+            <div className="bg-[#EDE9DF] w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[92vh] overflow-y-auto animate-slide-up">
               <div className="p-5 sm:p-6">
                 <div className="flex justify-between items-center mb-5">
                   <h3 className="font-display font-semibold text-tinta text-lg">

@@ -1,6 +1,7 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { I18nProvider } from '@/i18n';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 export const metadata: Metadata = {
   title: 'PtPtLah — Patungan Per-Item',
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body>
         <I18nProvider>
           {children}
+          <LanguageToggle />
         </I18nProvider>
       </body>
     </html>

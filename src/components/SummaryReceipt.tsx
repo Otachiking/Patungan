@@ -75,10 +75,9 @@ export function SummaryReceipt({
   title,
   date,
 }: SummaryReceiptProps) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const personMap = Object.fromEntries(persons.map((p) => [p.id, p]));
   const personIndex = Object.fromEntries(persons.map((p, i) => [p.id, i]));
-  const subtotalItems = items.reduce((s, i) => s + i.price, 0);
 
   return (
     <div
@@ -97,7 +96,7 @@ export function SummaryReceipt({
         <p className="text-xs font-mono uppercase tracking-[0.2em] text-tinta-pudar mb-1">PtPtLah</p>
         <h1 className="text-xl font-display font-bold text-tinta leading-snug">{title}</h1>
         <p className="text-xs font-mono text-tinta-pudar mt-1">
-          {new Date(date).toLocaleDateString('id-ID', {
+          {new Date(date + 'T00:00:00').toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -110,36 +109,35 @@ export function SummaryReceipt({
 
       {/* Items list */}
       <SectionHeader>{t.summary.itemsSection}</SectionHeader>
-      <div className="space-y-2 mb-3">
+      <div className="space-y-3 mb-3">
         {items.map((item) => {
           const payer = personMap[item.paid_by_person_id];
+          const totalPrice = item.price * (item.qty ?? 1);
           return (
             <div key={item.id} className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-tinta font-medium truncate">{item.name}</p>
                 <p className="text-xs text-tinta-pudar">
-                  Bayar: {payer?.name} · {item.participants.length} orang
+                  {t.editor.paidByShort}: {payer?.name}
                 </p>
               </div>
-              <MoneyDisplay amount={item.price} size="sm" color="muted" className="shrink-0" />
+              <div className="text-right shrink-0">
+                <p className="text-sm font-mono font-medium text-tinta">Rp{totalPrice.toLocaleString('id-ID')}</p>
+                {item.participants.length > 0 && (
+                  <p className="text-[11px] text-tinta-pudar">{t.summary.nPeople.replace('{n}', String(item.participants.length))}</p>
+                )}
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Subtotal + Tax + Total */}
-      <div className="space-y-1.5 border-t border-dashed border-tinta/15 pt-3">
-        <div className="flex justify-between text-sm text-tinta-pudar">
-          <span className="font-mono uppercase text-xs tracking-wide">{t.editor.subtotalRow}</span>
-          <MoneyDisplay amount={subtotalItems} size="sm" color="muted" />
-        </div>
-
-        <div className="flex justify-between items-center pt-1 border-t border-tinta/20">
-          <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">
-            {t.editor.totalRow}
-          </span>
-          <MoneyDisplay amount={totalExpense} size="lg" className="font-bold" />
-        </div>
+      {/* Total only — no subtotal row */}
+      <div className="flex justify-between items-center border-t border-dashed border-tinta/15 pt-3">
+        <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">
+          {t.editor.totalRow}
+        </span>
+        <MoneyDisplay amount={totalExpense} size="lg" className="font-bold" />
       </div>
 
       <ReceiptDivider label={t.summary.balanceSection} />
@@ -166,18 +164,18 @@ export function SummaryReceipt({
                       : 'bg-tinta/10 text-tinta'
                   }`}
                 >
-                  {isCreditor ? '↑ Terima' : isDebtor ? '↓ Bayar' : '✓ Lunas'}
+                  {isCreditor ? t.summary.receiveLabel : isDebtor ? t.summary.payLabel : t.summary.settledLabel}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs">
-                <span className="text-tinta-pudar">Tanggungan</span>
+                <span className="text-tinta-pudar">{t.summary.expenseLabel}</span>
                 <MoneyDisplay amount={bal.expense} size="sm" color="muted" className="text-right" />
 
-                <span className="text-tinta-pudar">Sudah bayar</span>
+                <span className="text-tinta-pudar">{t.summary.paidLabel}</span>
                 <MoneyDisplay amount={bal.paid} size="sm" color="muted" className="text-right" />
 
-                <span className="font-semibold text-tinta">Selisih akhir</span>
+                <span className="font-semibold text-tinta">{t.summary.netLabel}</span>
                 <MoneyDisplay
                   amount={bal.net}
                   size="sm"
@@ -195,11 +193,6 @@ export function SummaryReceipt({
 
       {/* Settlement transactions */}
       <SettlementList transactions={transactions} persons={persons} />
-
-      {/* Footer */}
-      <div className="text-center mt-6 text-xs font-mono text-tinta-pudar opacity-60">
-        dibuat dengan PtPtLah
-      </div>
     </div>
   );
 }

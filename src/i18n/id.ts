@@ -39,6 +39,9 @@ const id = {
     itemPriceLabel: 'Harga Satuan',
     itemPricePlaceholder: '0',
     paidByLabel: 'Dibayar oleh',
+    paidByShort: 'Dibayar',
+    sharedByShort: 'Ditanggung',
+    perPersonShort: 'orang',
     participantsLabel: 'Siapa yang menanggung?',
     saveItemBtn: 'Simpan',
     cancelBtn: 'Batal',
@@ -51,6 +54,7 @@ const id = {
     subtotalRow: 'Subtotal',
     totalRow: 'Total',
     personSectionTitle: 'Peserta',
+    addPersonBtn: 'Tambah Peserta',
     pinModalTitle: 'Akses Edit Terkunci',
     pinModalDesc: 'Masukkan PIN 4 angka untuk mengedit pesanan ini.',
     pinModalPlaceholder: 'PIN (4 angka)',
@@ -75,6 +79,11 @@ const id = {
     totalExpenseLabel: 'Total Tanggungan',
     paidLabel: 'Sudah Dibayar',
     netLabel: 'Selisih Akhir',
+    expenseLabel: 'Tanggungan',
+    receiveLabel: '↑ Terima',
+    payLabel: '↓ Bayar',
+    settledLabel: '✓ Lunas',
+    nPeople: '{n} orang',
     editBtn: 'Edit Acara',
     finalizeBtn: 'Kunci Acara',
     finalizeConfirm: 'Yakin mau mengunci acara ini? Setelah dikunci, tidak bisa diedit lagi.',
@@ -97,6 +106,19 @@ const id = {
     save: 'Simpan',
     cancel: 'Batal',
     close: 'Tutup',
+    home: 'Beranda',
+  },
+
+  history: {
+    title: 'Patungan Sebelumnya',
+    empty: 'Belum ada riwayat patungan.',
+    persons: 'peserta',
+    items: 'item',
+  },
+
+  footer: {
+    tagline: 'Gratis · Tanpa akun · Open source',
+    madeWith: 'dibuat dengan',
   },
 };
 

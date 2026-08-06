@@ -175,3 +175,34 @@ export function verifyEditToken(project: Project, token: string | null): boolean
   if (!token) return false;
   return project.edit_token === token || project.pin === token;
 }
+
+// ─── Local History (recently created events) ──────────────────────────────────
+
+const HISTORY_KEY = 'ptptlah-history';
+const MAX_HISTORY = 20;
+
+export interface HistoryEntry {
+  id: string;
+  title: string;
+  date: string;
+  personCount: number;
+  createdAt: string; // ISO timestamp
+}
+
+export function saveToHistory(entry: HistoryEntry): void {
+  if (typeof window === 'undefined') return;
+  const existing: HistoryEntry[] = getHistory();
+  const filtered = existing.filter((e) => e.id !== entry.id);
+  const updated = [entry, ...filtered].slice(0, MAX_HISTORY);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
+}
+
+export function getHistory(): HistoryEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? (JSON.parse(raw) as HistoryEntry[]) : [];
+  } catch {
+    return [];
+  }
+}

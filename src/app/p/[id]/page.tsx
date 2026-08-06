@@ -72,14 +72,23 @@ export default function SummaryPage() {
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
           {canEdit ? (
-            <Link href={`/p/${id}/edit`} className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium">
+            <Link href={`/p/${id}/edit`} className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium shrink-0">
               ← ✏️ Edit Acara
             </Link>
           ) : (
-            <Link href="/" className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium">
+            <Link href="/" className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium shrink-0">
               ← {t.common.back}
             </Link>
           )}
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={handleCopyLink}
+            id="copy-link-header-btn"
+            className="text-xs"
+          >
+            {copied ? `✓ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
+          </Button>
         </div>
       </header>
 
@@ -118,36 +127,32 @@ export default function SummaryPage() {
         </div>
 
         {/* Action buttons */}
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="mt-6 px-1 flex flex-col gap-3 pb-10">
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={handleCopyLink}
+            id="share-link-btn"
+          >
+            {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
+          </Button>
+
           {canEdit && !showStamp && (
             <Button
               variant="ghost"
               fullWidth
               onClick={handleFinalize}
               id="finalize-btn"
+              className="text-tinta-pudar"
             >
               🔒 {t.summary.finalizeBtn}
             </Button>
           )}
-          
-          <div className="flex items-center gap-3">
-            {canEdit && (
-              <Link href={`/p/${id}/edit`} className="flex-1">
-                <Button variant="secondary" fullWidth id="edit-event-bottom-btn">
-                  ✏️ Edit Acara
-                </Button>
-              </Link>
-            )}
-            <Button
-              variant="secondary"
-              fullWidth
-              className="flex-1"
-              onClick={handleCopyLink}
-              id="share-link-btn"
-            >
-              {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
-            </Button>
-          </div>
+
+          {/* PtPtLah watermark footer */}
+          <p className="text-center text-xs font-mono text-tinta-pudar opacity-40 pt-2">
+            dibuat dengan PtPtLah
+          </p>
         </div>
       </div>
     </main>

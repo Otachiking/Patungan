@@ -207,27 +207,15 @@ export default function EditorPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
-          <div className="min-w-0 flex flex-col flex-1">
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-mono text-tinta-pudar uppercase tracking-wide hidden sm:block">PtPtLah</p>
-              {project.pin && (
-                <span className="text-[10px] font-mono bg-tinta/10 text-tinta px-1.5 py-0.5 rounded-md" title="PIN Akses Edit">
-                  PIN: {project.pin}
-                </span>
-              )}
-            </div>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <Link href="/" className="shrink-0 text-tinta-pudar hover:text-tinta transition-colors" title={t.common.home}>
+              🏠
+            </Link>
             <h1 className="font-display font-bold text-tinta text-base sm:text-lg leading-tight truncate">
               {project.title}
             </h1>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={handleLogout}
-              className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-sm"
-              title="Kunci Akses Edit"
-            >
-              🔒
-            </button>
             <Link href={`/p/${id}`}>
               <Button size="sm" id="see-summary-btn" className="text-xs sm:text-sm px-3 sm:px-4">
                 <span className="hidden sm:inline">{t.editor.seeResultBtn} →</span>
@@ -310,6 +298,13 @@ export default function EditorPage() {
           )}
 
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="max-w-5xl mx-auto px-4 pb-6 text-center">
+        <p className="text-xs font-mono text-tinta-pudar opacity-40">
+          {t.footer.madeWith} PtPtLah
+        </p>
       </div>
 
       {/* Undo Toast */}
