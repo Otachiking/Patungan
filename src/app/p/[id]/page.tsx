@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/i18n';
-import { getProject, getStoredEditToken, verifyEditToken } from '@/lib/db';
+import { getProject, getStoredEditToken, verifyEditToken, addToHistoryIds } from '@/lib/db';
 import { calculateSettlementFull } from '@/lib/engine';
+import { ReceiptGallery } from '@/components/ReceiptGallery';
 import type { ProjectWithRelations } from '@/lib/types';
 import { SummaryReceipt } from '@/components/SummaryReceipt';
 import { Button } from '@/components/ui/Button';
@@ -29,9 +30,13 @@ export default function SummaryPage() {
     if (data) {
       const token = getStoredEditToken(id);
       setCanEdit(verifyEditToken(data, token));
+      addToHistoryIds(id); // track visited projects
+      document.title = `PtPtLah – ${data.title}`;
     }
     setLoading(false);
   }, [id]);
+
+  useEffect(() => { return () => { document.title = 'PtPtLah'; }; }, []);
 
   useEffect(() => {
     load();
@@ -126,33 +131,43 @@ export default function SummaryPage() {
           )}
         </div>
 
-        {/* Action buttons */}
-        <div className="mt-6 px-1 flex flex-col gap-3 pb-10">
-          <Button
-            variant="secondary"
-            fullWidth
-            onClick={handleCopyLink}
-            id="share-link-btn"
-          >
-            {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
-          </Button>
+        <div className="w-full max-w-[400px] mx-auto">
+          {/* DOKUMENTASI STRUK */}
+          <div className="w-full max-w-[400px] mt-6">
+            <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm p-4 w-full">
+              <h2 className="font-display font-semibold text-tinta text-sm mb-3">📎 Dokumentasi Struk</h2>
+              <ReceiptGallery projectId={id} readOnly={true} />
+            </div>
+          </div>
 
-          {canEdit && !showStamp && (
+          {/* Action buttons */}
+          <div className="w-full max-w-[400px] mt-6 px-1 flex flex-col gap-3 pb-10">
             <Button
-              variant="ghost"
+              variant="secondary"
               fullWidth
-              onClick={handleFinalize}
-              id="finalize-btn"
-              className="text-tinta-pudar"
+              onClick={handleCopyLink}
+              id="share-link-btn"
             >
-              🔒 {t.summary.finalizeBtn}
+              {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
             </Button>
-          )}
 
-          {/* PtPtLah watermark footer */}
-          <p className="text-center text-xs font-mono text-tinta-pudar opacity-40 pt-2">
-            dibuat dengan PtPtLah
-          </p>
+            {canEdit && !showStamp && (
+              <Button
+                variant="ghost"
+                fullWidth
+                onClick={handleFinalize}
+                id="finalize-btn"
+                className="text-tinta-pudar"
+              >
+                🔒 {t.summary.finalizeBtn}
+              </Button>
+            )}
+
+            {/* PtPtLah watermark footer */}
+            <p className="text-center text-xs font-mono text-tinta-pudar opacity-40 pt-2">
+              dibuat dengan PtPtLah
+            </p>
+          </div>
         </div>
       </div>
     </main>

@@ -60,10 +60,20 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
     return errs;
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent) {
+    if (e) e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      
+      // Auto-focus first invalid field
+      if (errs.name) document.getElementById('item-name-input')?.focus();
+      else if (errs.price) document.getElementById('item-price-input')?.focus();
+      else if (errs.qty) document.getElementById('item-qty-input')?.focus();
+      else if (errs.participants) {
+        // Scroll to participants area
+        document.getElementById('item-participants-section')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
       return;
     }
     setErrors({});
@@ -100,19 +110,37 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
   const itemTotal = priceNum * qtyNum;
   const perPerson = participants.size > 0 ? Math.ceil(itemTotal / participants.size) : 0;
 
-  return (
-    <div className="bg-white rounded-2xl border border-tinta/15 p-5 space-y-4 shadow-sm">
-      <h3 className="font-semibold text-tinta text-base">
-        {initialItem ? '✏️ Edit Item' : '＋ Tambah Item'}
-      </h3>
+  function handleQtyKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const current = parseInt(qty.replace(/\D/g, ''), 10) || 1;
+      if (current > 1) setQty((current - 1).toString());
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const current = parseInt(qty.replace(/\D/g, ''), 10) || 0;
+      setQty((current + 1).toString());
+    }
+  }
 
+  const handleEnterSubmit = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSave} onKeyDown={(e) => { if (e.key === 'Escape') onCancel(); }} className="space-y-4">
+      {/* Name */}
       <Input
         label={t.editor.itemNameLabel}
         placeholder={t.editor.itemNamePlaceholder}
         value={name}
         onChange={(e) => setName(e.target.value)}
+        onKeyDown={handleEnterSubmit}
         error={errors.name}
         id="item-name-input"
+        autoFocus
       />
 
       <div className="grid grid-cols-[1fr_130px] gap-3">
@@ -131,13 +159,12 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
                 const raw = e.target.value.replace(/\D/g, '');
                 setPrice(raw);
               }}
-              className={`
-                w-full border rounded-xl pl-9 pr-3 py-2.5 text-tinta bg-white font-mono
+              onKeyDown={handleEnterSubmit}
+              className={`w-full border rounded-xl pl-9 pr-3 py-2.5 text-tinta bg-white font-mono
                 placeholder:text-tinta-pudar/60 border-tinta/20
                 focus:outline-none focus:ring-2 focus:ring-stamp/30 focus:border-stamp
                 transition-all duration-150
-                ${errors.price ? 'border-red-500' : ''}
-              `}
+                ${errors.price ? 'border-red-500' : ''}`}
             />
           </div>
           {errors.price && <p className="text-xs text-red-600">{errors.price}</p>}
@@ -149,13 +176,14 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
           <div className={`flex items-center border rounded-xl bg-white transition-all duration-150 ${errors.qty ? 'border-red-500' : 'border-tinta/20 focus-within:ring-2 focus-within:ring-stamp/30 focus-within:border-stamp'}`}>
             <button
               type="button"
+              tabIndex={-1}
               onClick={() => {
                 const current = parseInt(qty.replace(/\D/g, ''), 10) || 1;
                 if (current > 1) setQty((current - 1).toString());
               }}
               className="px-3 py-2.5 text-tinta-pudar hover:text-tinta hover:bg-black/5 rounded-l-xl transition-colors"
             >
-              -
+              −
             </button>
             <input
               id="item-qty-input"
@@ -166,26 +194,33 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
                 const raw = e.target.value.replace(/\D/g, '');
                 setQty(raw);
               }}
-              className="w-full min-w-0 text-center text-tinta font-mono focus:outline-none bg-transparent"
+              onKeyDown={(e) => {
+                handleQtyKey(e);
+                handleEnterSubmit(e);
+              }}
+              className="w-full min-w-0 text-center text-tinta font-mono focus:outline-none bg-transparent py-2.5"
             />
             <button
               type="button"
+              tabIndex={-1}
               onClick={() => {
                 const current = parseInt(qty.replace(/\D/g, ''), 10) || 0;
                 setQty((current + 1).toString());
               }}
               className="px-3 py-2.5 text-tinta-pudar hover:text-tinta hover:bg-black/5 rounded-r-xl transition-colors"
             >
-              +
+              ＋
             </button>
           </div>
           {errors.qty && <p className="text-xs text-red-600">{errors.qty}</p>}
         </div>
       </div>
 
-      <div className="flex justify-end text-sm text-tinta-pudar font-mono">
-        Subtotal: Rp {itemTotal.toLocaleString('id-ID')}
-      </div>
+      {priceNum > 0 && qtyNum > 1 && (
+        <div className="flex justify-end text-xs text-tinta-pudar font-mono">
+          Subtotal: Rp{itemTotal.toLocaleString('id-ID')}
+        </div>
+      )}
 
       <Select
         label={t.editor.paidByLabel}
@@ -196,11 +231,19 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
       />
 
       {/* Participant checklist */}
-      <div className="space-y-2">
+      <div id="item-participants-section" className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-tinta">{t.editor.participantsLabel}</label>
           <button
+            id="toggle-all-btn"
             type="button"
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Tab' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById(`participant-cb-${persons[0]?.id}`)?.focus();
+              }
+            }}
             onClick={() =>
               setParticipants(
                 participants.size === persons.length
@@ -219,32 +262,42 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
             const checked = participants.has(person.id);
             const color = getAvatarColor(index);
             const initials = getInitials(person.name);
-            
+
             return (
               <label
                 key={person.id}
                 className={`
                   flex-1 basis-[18%] min-w-[60px] flex flex-col items-center gap-2 p-3 rounded-2xl border cursor-pointer
-                  transition-all duration-150 select-none
+                  transition-all duration-150 select-none outline-none
+                  focus-within:ring-2 focus-within:ring-stamp focus-within:ring-offset-1
                   ${checked
-                    ? 'bg-stamp/5 border-stamp/30 text-tinta'
-                    : 'bg-white border-tinta/15 opacity-60 hover:opacity-100 hover:border-tinta/30 text-tinta-pudar'
+                    ? 'bg-stamp/8 border-stamp/50 shadow-sm'
+                    : 'bg-white border-tinta/15 opacity-55 hover:opacity-90 hover:border-tinta/30'
                   }
                 `}
               >
                 <input
+                  id={`participant-cb-${person.id}`}
                   type="checkbox"
                   checked={checked}
                   onChange={() => toggleParticipant(person.id)}
+                  onKeyDown={(e) => {
+                    if (index === 0 && e.key === 'Tab' && e.shiftKey) {
+                      e.preventDefault();
+                      document.getElementById('toggle-all-btn')?.focus();
+                    }
+                  }}
                   className="sr-only"
                 />
-                <div 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm transition-transform ${checked ? 'scale-100' : 'scale-90 grayscale'}`}
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-sm transition-all duration-150 ${
+                    checked ? 'scale-100 ring-2 ring-white ring-offset-1' : 'scale-90 grayscale opacity-70'
+                  }`}
                   style={{ backgroundColor: color }}
                 >
                   {initials}
                 </div>
-                <span className={`text-xs font-medium truncate w-full text-center ${checked ? 'text-tinta' : 'text-tinta-pudar'}`}>
+                <span className={`text-xs font-medium truncate w-full text-center ${checked ? 'text-tinta font-semibold' : 'text-tinta-pudar'}`}>
                   {person.name}
                 </span>
               </label>
@@ -256,7 +309,7 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
         {/* Per-person preview */}
         {priceNum > 0 && participants.size > 0 && (
           <p className="text-xs text-tinta-pudar text-right font-mono">
-            ≈ Rp{perPerson.toLocaleString('id-ID')} / orang ({participants.size} orang)
+            {participants.size} orang ≈ @Rp{perPerson.toLocaleString('id-ID')}
           </p>
         )}
       </div>
@@ -267,18 +320,31 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
           onClick={onCancel}
           fullWidth
           id="item-cancel-btn"
+          tabIndex={-1}
+          onKeyDown={(e) => {
+            if (e.key === 'Tab' && !e.shiftKey) {
+              e.preventDefault();
+              document.getElementById('item-save-btn')?.focus();
+            }
+          }}
         >
           {t.editor.cancelBtn}
         </Button>
         <Button
-          onClick={handleSave}
+          type="submit"
           loading={loading}
           fullWidth
           id="item-save-btn"
+          onKeyDown={(e) => {
+            if (e.key === 'Tab' && e.shiftKey) {
+              e.preventDefault();
+              document.getElementById('item-cancel-btn')?.focus();
+            }
+          }}
         >
           {t.editor.saveItemBtn}
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

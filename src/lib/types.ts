@@ -77,3 +77,12 @@ export type CreateProjectInput = {
 
 export type UpsertItemInput = Omit<Item, 'id' | 'created_at' | 'participants'> & { id?: string };
 export type UpsertPersonInput = Omit<Person, 'id' | 'created_at'> & { id?: string };
+
+export interface ReceiptImage {
+  id: string;
+  project_id: string;
+  storage_path: string;
+  public_url: string;
+  uploaded_at: string;
+  order: number;
+}

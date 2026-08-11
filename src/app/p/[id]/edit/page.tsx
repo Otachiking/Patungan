@@ -9,6 +9,7 @@ import { calculateSettlementFull } from '@/lib/engine';
 import type { Item, ItemParticipant, Person, ProjectWithRelations, UpsertItemInput } from '@/lib/types';
 import { PersonList } from '@/components/PersonList';
 import { ItemList } from '@/components/ItemList';
+import { ReceiptGallery } from '@/components/ReceiptGallery';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { Button } from '@/components/ui/Button';
 import { ReceiptDivider } from '@/components/ui/ReceiptDivider';
@@ -24,6 +25,16 @@ export default function EditorPage() {
   const [canEdit, setCanEdit] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
+
+  // Dynamic page title
+  useEffect(() => {
+    if (project?.title) {
+      document.title = `PtPtLah – ${project.title}`;
+    } else {
+      document.title = 'PtPtLah';
+    }
+    return () => { document.title = 'PtPtLah'; };
+  }, [project?.title]);
 
   const [pendingDeletes, setPendingDeletes] = useState<Set<string>>(new Set());
   const pendingTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
@@ -63,14 +74,67 @@ export default function EditorPage() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (!canEdit) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing
+      if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA' || document.activeElement?.tagName === 'SELECT') return;
+      
+      if (e.shiftKey && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        document.getElementById('add-item-btn')?.click();
+      }
+      if (e.shiftKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        document.getElementById('add-person-btn')?.click();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [canEdit]);
+
   // ─── Item handlers ────────────────────────────────────────────────────────
 
-  async function handleSaveItem(
-    itemData: UpsertItemInput,
-    participants: ItemParticipant[]
-  ) {
-    await upsertItem({ ...itemData, project_id: id }, participants);
-    await load();
+  function handleSaveItem(item: UpsertItemInput, parts: ItemParticipant[]) {
+    return new Promise<void>((resolve) => {
+      const optimisticId = item.id || crypto.randomUUID();
+      const optimisticItem = {
+        id: optimisticId,
+        project_id: item.project_id || id,
+        name: item.name,
+        price: item.price,
+        qty: item.qty ?? 1,
+        paid_by_person_id: item.paid_by_person_id,
+        order: item.order ?? Math.floor(Date.now() / 1000),
+        created_at: new Date().toISOString(),
+        participants: parts
+      };
+
+      setProject(prev => {
+        if (!prev) return prev;
+        const newItems = prev.items.filter(i => i.id !== item.id);
+        newItems.push(optimisticItem as any);
+        newItems.sort((a, b) => b.order - a.order);
+        return { ...prev, items: newItems };
+      });
+
+      // Resolve immediately for snappy UI
+      resolve();
+
+      // Background save
+      upsertItem(item, parts)
+        .then(savedItem => {
+          setProject(prev => {
+            if (!prev) return prev;
+            const newItems = prev.items.map(i => i.id === optimisticId || i.id === item.id ? savedItem : i);
+            return { ...prev, items: newItems };
+          });
+        })
+        .catch(async e => {
+          console.error('Failed to save item:', e);
+          await load(); // Revert on failure
+        });
+    });
   }
 
   async function handleDeleteItem(itemId: string) {
@@ -227,22 +291,24 @@ export default function EditorPage() {
       </header>
 
       <div className="max-w-5xl mx-auto px-4 pt-5 pb-10">
-        <div className="flex flex-col lg:grid lg:grid-cols-[7fr_3fr] gap-5 items-start">
+        <div className="flex flex-col lg:grid lg:grid-cols-[7fr_3fr] lg:grid-rows-[auto_1fr] gap-5 items-start">
 
           {/* PESERTA (Mobile: 1st, Desktop: Right Col, Top) */}
-          <div className="order-1 lg:order-none lg:col-start-2 lg:row-start-1 bg-kertas rounded-2xl border border-tinta/10 shadow-sm overflow-hidden animate-fade-up w-full" style={{ animationDelay: '0.05s' }}>
-            <PersonList
-              persons={visiblePersons}
-              items={visibleItems}
-              onAdd={handleAddPerson}
-              onDelete={handleDeletePerson}
-              onRename={handleRenamePerson}
-              readOnly={!canEdit}
-            />
+          <div className="order-1 lg:order-none lg:col-start-2 lg:row-start-1 space-y-3 w-full min-w-0 animate-fade-up" style={{ animationDelay: '0.05s' }}>
+            <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm overflow-hidden min-w-0">
+              <PersonList
+                persons={visiblePersons}
+                items={visibleItems}
+                onAdd={handleAddPerson}
+                onDelete={handleDeletePerson}
+                onRename={handleRenamePerson}
+                readOnly={!canEdit}
+              />
+            </div>
           </div>
 
           {/* ITEM (Mobile: 2nd, Desktop: Left Col, Span 2 Rows) */}
-          <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-5 animate-fade-up w-full" style={{ animationDelay: '0.1s' }}>
+          <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-5 w-full min-w-0 animate-fade-up" style={{ animationDelay: '0.1s' }}>
             <h2 className="font-display font-semibold text-tinta mb-4">🧾 Item</h2>
             <ItemList
               items={visibleItems}
@@ -254,48 +320,56 @@ export default function EditorPage() {
             />
           </div>
 
-          {/* PREVIEW TOTAL (Mobile: 3rd, Desktop: Right Col, Bottom) */}
-          {settlement && visibleItems.length > 0 && (
-            <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-4 space-y-2 animate-fade-up w-full" style={{ animationDelay: '0.15s' }}>
-              <h2 className="font-display font-semibold text-tinta mb-2">📊 Preview Total</h2>
-              <ReceiptDivider />
-              <div className="flex justify-between text-sm text-tinta-pudar">
-                <span className="font-mono uppercase text-xs tracking-wide">Subtotal</span>
-                <MoneyDisplay amount={subtotal} size="sm" color="muted" />
-              </div>
-
-              <div className="flex justify-between items-center pt-2 border-t border-dashed border-tinta/15">
-                <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">Total</span>
-                <MoneyDisplay amount={settlement.total_expense} size="lg" className="font-bold" />
-              </div>
-
-              <ReceiptDivider label="Settlement" />
-              {settlement.transactions.length === 0 ? (
-                <p className="text-xs text-lunas text-center">✅ Tidak ada yang perlu transfer</p>
-              ) : (
-                <div className="space-y-1">
-                  {settlement.transactions.map((txn, i) => {
-                    const from = visiblePersons.find((p) => p.id === txn.from_person_id);
-                    const to = visiblePersons.find((p) => p.id === txn.to_person_id);
-                    return (
-                      <div key={i} className="flex justify-between text-sm">
-                        <span className="text-tinta">{from?.name} → {to?.name}</span>
-                        <MoneyDisplay amount={txn.amount} size="sm" color="negative" />
-                      </div>
-                    );
-                  })}
+          {/* PREVIEW TOTAL & GALLERY (Mobile: 3rd & 4th, Desktop: Right Col, Middle/Bottom, Sticky) */}
+          <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 flex flex-col gap-5 w-full min-w-0 animate-fade-up lg:sticky lg:top-20 self-start" style={{ animationDelay: '0.15s' }}>
+            {settlement && visibleItems.length > 0 && (
+              <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-4 space-y-2">
+                <h2 className="font-display font-semibold text-tinta mb-2">📊 Preview Total</h2>
+                <ReceiptDivider />
+                <div className="flex justify-between text-sm text-tinta-pudar">
+                  <span className="font-mono uppercase text-xs tracking-wide">Subtotal</span>
+                  <MoneyDisplay amount={subtotal} size="sm" color="muted" />
                 </div>
-              )}
 
-              {visibleItems.length > 0 && (
-                <Link href={`/p/${id}`} className="block mt-3">
-                  <Button fullWidth size="sm" id="goto-summary-btn">
-                    {t.editor.seeResultBtn} →
-                  </Button>
-                </Link>
-              )}
+                <div className="flex justify-between items-center pt-2 border-t border-dashed border-tinta/15">
+                  <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">Total</span>
+                  <MoneyDisplay amount={settlement.total_expense} size="lg" className="font-bold" />
+                </div>
+
+                <ReceiptDivider label="Settlement" />
+                {settlement.transactions.length === 0 ? (
+                  <p className="text-xs text-lunas text-center">✅ Tidak ada yang perlu transfer</p>
+                ) : (
+                  <div className="space-y-1">
+                    {settlement.transactions.map((txn, i) => {
+                      const from = visiblePersons.find((p) => p.id === txn.from_person_id);
+                      const to = visiblePersons.find((p) => p.id === txn.to_person_id);
+                      return (
+                        <div key={i} className="flex justify-between text-sm">
+                          <span className="text-tinta">{from?.name} → {to?.name}</span>
+                          <MoneyDisplay amount={txn.amount} size="sm" color="negative" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {visibleItems.length > 0 && (
+                  <Link href={`/p/${id}`} className="block mt-3">
+                    <Button fullWidth size="sm" id="goto-summary-btn">
+                      {t.editor.seeResultBtn} →
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
+
+            {/* GALLERY */}
+            <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm p-4 w-full">
+              <h2 className="font-display font-semibold text-tinta text-sm mb-3">📎 Dokumentasi Struk</h2>
+              <ReceiptGallery projectId={id} readOnly={!canEdit} />
             </div>
-          )}
+          </div>
 
         </div>
       </div>

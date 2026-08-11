@@ -88,6 +88,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
         </div>
         {!readOnly && (
           <button
+            id="add-person-btn"
             type="button"
             onClick={startAddPerson}
             className="text-sm font-semibold text-tinta hover:text-stamp transition-colors flex items-center gap-1"
