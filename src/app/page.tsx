@@ -105,7 +105,7 @@ function LandingPageContent() {
       {/* Hero */}
       <div className="text-center mb-10 animate-fade-up w-full max-w-4xl">
         <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-stamp/10 rounded-full border border-stamp/20">
-          <span className="text-stamp text-xs font-mono font-semibold uppercase tracking-widest">PtPtLah</span>
+          <span className="text-stamp text-xs font-mono font-semibold uppercase tracking-widest">SpillTheBill</span>
         </div>
         <h1 className="font-display text-4xl sm:text-5xl font-bold text-tinta leading-tight">
           {t.landing.heading}
@@ -212,7 +212,9 @@ function LandingPageContent() {
       {/* Footer */}
       <div className="mt-10 text-center space-y-1">
         <p className="text-xs text-tinta-pudar font-mono opacity-70">{t.footer.tagline}</p>
-        <p className="text-xs text-tinta-pudar font-mono opacity-40">{t.footer.madeWith} PtPtLah</p>
+        <p className="text-xs text-tinta-pudar font-mono opacity-40">
+          ©2026 SpillTheBill by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
+        </p>
         {isDev && (
           <Link
             href="/?demo=true"

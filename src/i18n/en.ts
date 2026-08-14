@@ -4,7 +4,7 @@
  */
 
 const en = {
-  appName: 'PtPtLah',
+  appName: 'SpillTheBill',
   appTagline: 'Item-level bill splitting, fair & transparent',
 
   landing: {

@@ -28,16 +28,16 @@
 
 :root {
   /* Avatar Palette (10 colors) */
-  --color-ptptlah-red: #EF4444;
-  --color-ptptlah-orange: #F97316;
-  --color-ptptlah-yellow: #EAB308;
-  --color-ptptlah-lime: #84CC16;
-  --color-ptptlah-green: #22C55E;
-  --color-ptptlah-cyan: #06B6D4;
-  --color-ptptlah-blue: #3B82F6;
-  --color-ptptlah-indigo: #6366F1;
-  --color-ptptlah-purple: #A855F7;
-  --color-ptptlah-pink: #EC4899;
+  --color-spillthebill-red: #EF4444;
+  --color-spillthebill-orange: #F97316;
+  --color-spillthebill-yellow: #EAB308;
+  --color-spillthebill-lime: #84CC16;
+  --color-spillthebill-green: #22C55E;
+  --color-spillthebill-cyan: #06B6D4;
+  --color-spillthebill-blue: #3B82F6;
+  --color-spillthebill-indigo: #6366F1;
+  --color-spillthebill-purple: #A855F7;
+  --color-spillthebill-pink: #EC4899;
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────────────────── */

@@ -29,7 +29,7 @@ const I18nContext = createContext<I18nContextType>({
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('ptptlah-locale') as Locale) || 'id';
+      return (localStorage.getItem('spillthebill-locale') as Locale) || 'id';
     }
     return 'id';
   });
@@ -37,7 +37,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   function setLocale(l: Locale) {
     setLocaleState(l);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('ptptlah-locale', l);
+      localStorage.setItem('spillthebill-locale', l);
     }
   }
 

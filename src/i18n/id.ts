@@ -5,7 +5,7 @@
 
 const id = {
   // ─── App ───────────────────────────────────────────────────────────────────
-  appName: 'PtPtLah',
+  appName: 'SpillTheBill',
   appTagline: 'Patungan per-item, adil & transparan',
 
   // ─── Landing page ─────────────────────────────────────────────────────────
@@ -39,8 +39,8 @@ const id = {
     itemPriceLabel: 'Harga Satuan',
     itemPricePlaceholder: '0',
     paidByLabel: 'Dibayar oleh',
-    paidByShort: 'Dibayar',
-    sharedByShort: 'Ditanggung',
+    paidByShort: 'Dibayarkan',
+    sharedByShort: 'Dibebankan',
     perPersonShort: 'orang',
     participantsLabel: 'Siapa yang menanggung?',
     saveItemBtn: 'Simpan',

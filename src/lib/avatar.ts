@@ -1,16 +1,16 @@
 // Avatar and Color helpers for consistent UI across the app
 
 export const AVATAR_COLORS = [
-  'var(--color-ptptlah-red)',
-  'var(--color-ptptlah-orange)',
-  'var(--color-ptptlah-yellow)',
-  'var(--color-ptptlah-lime)',
-  'var(--color-ptptlah-green)',
-  'var(--color-ptptlah-cyan)',
-  'var(--color-ptptlah-blue)',
-  'var(--color-ptptlah-indigo)',
-  'var(--color-ptptlah-purple)',
-  'var(--color-ptptlah-pink)',
+  'var(--color-spillthebill-red)',
+  'var(--color-spillthebill-orange)',
+  'var(--color-spillthebill-yellow)',
+  'var(--color-spillthebill-lime)',
+  'var(--color-spillthebill-green)',
+  'var(--color-spillthebill-cyan)',
+  'var(--color-spillthebill-blue)',
+  'var(--color-spillthebill-indigo)',
+  'var(--color-spillthebill-purple)',
+  'var(--color-spillthebill-pink)',
 ];
 
 export function getInitials(name: string): string {

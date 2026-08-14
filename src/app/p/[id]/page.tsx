@@ -31,12 +31,12 @@ export default function SummaryPage() {
       const token = getStoredEditToken(id);
       setCanEdit(verifyEditToken(data, token));
       addToHistoryIds(id); // track visited projects
-      document.title = `PtPtLah – ${data.title}`;
+      document.title = `SpillTheBill – ${data.title}`;
     }
     setLoading(false);
   }, [id]);
 
-  useEffect(() => { return () => { document.title = 'PtPtLah'; }; }, []);
+  useEffect(() => { return () => { document.title = 'SpillTheBill'; }; }, []);
 
   useEffect(() => {
     load();
@@ -163,9 +163,9 @@ export default function SummaryPage() {
               </Button>
             )}
 
-            {/* PtPtLah watermark footer */}
+            {/* SpillTheBill watermark footer */}
             <p className="text-center text-xs font-mono text-tinta-pudar opacity-40 pt-2">
-              dibuat dengan PtPtLah
+              ©2026 SpillTheBill by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
             </p>
           </div>
         </div>

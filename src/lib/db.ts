@@ -179,7 +179,7 @@ export function verifyEditToken(project: Project, token: string | null): boolean
 
 // ─── Local History (project IDs this device has created/visited) ──────────────
 
-const HISTORY_KEY = 'ptptlah-history';
+const HISTORY_KEY = 'spillthebill-history';
 const MAX_HISTORY = 20;
 
 /** Lightweight local record — just the project ID list */

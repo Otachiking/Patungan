@@ -93,7 +93,7 @@ export function SummaryReceipt({
 
       {/* Header */}
       <div className="text-center mb-5 relative">
-        <p className="text-xs font-mono uppercase tracking-[0.2em] text-tinta-pudar mb-1">PtPtLah</p>
+        <p className="text-xs font-mono uppercase tracking-[0.2em] text-tinta-pudar mb-1">SpillTheBill</p>
         <h1 className="text-xl font-display font-bold text-tinta leading-snug">{title}</h1>
         <p className="text-xs font-mono text-tinta-pudar mt-1">
           {new Date(date + 'T00:00:00').toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {

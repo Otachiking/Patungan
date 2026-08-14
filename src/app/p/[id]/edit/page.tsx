@@ -29,11 +29,11 @@ export default function EditorPage() {
   // Dynamic page title
   useEffect(() => {
     if (project?.title) {
-      document.title = `PtPtLah – ${project.title}`;
+      document.title = `SpillTheBill – ${project.title}`;
     } else {
-      document.title = 'PtPtLah';
+      document.title = 'SpillTheBill';
     }
-    return () => { document.title = 'PtPtLah'; };
+    return () => { document.title = 'SpillTheBill'; };
   }, [project?.title]);
 
   const [pendingDeletes, setPendingDeletes] = useState<Set<string>>(new Set());
@@ -377,7 +377,7 @@ export default function EditorPage() {
       {/* Footer */}
       <div className="max-w-5xl mx-auto px-4 pb-6 text-center">
         <p className="text-xs font-mono text-tinta-pudar opacity-40">
-          {t.footer.madeWith} PtPtLah
+          ©2026 SpillTheBill by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
         </p>
       </div>
 
