@@ -76,6 +76,7 @@ export async function POST(request: Request) {
         project_id: projectId,
         name: item_name,
         price: price,
+        qty: 1,
         paid_by_person_id: payer.id,
         order: project.items.length,
       },
