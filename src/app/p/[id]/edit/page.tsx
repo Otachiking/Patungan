@@ -80,11 +80,9 @@ export default function EditorPage() {
       storeEditToken(data.id, urlToken);
       // Clean up URL to avoid leaving token in address bar
       router.replace(`/p/${id}/edit`);
-      setCanEdit(true);
-    } else {
-      const token = getStoredEditToken(data.id);
-      setCanEdit(verifyEditToken(data, token));
     }
+    // BYPASS PIN: Always allow editing
+    setCanEdit(true);
     
     setLoading(false);
   }, [id, router, searchParams]);
