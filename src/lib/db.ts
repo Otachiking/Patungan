@@ -16,6 +16,12 @@ import type {
   UpsertPersonInput,
 } from './types';
 
+// Helper for title casing names and items
+function toTitleCase(str: string): string {
+  if (!str) return str;
+  return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+}
+
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
 export async function createProject(input: CreateProjectInput): Promise<ProjectWithRelations> {
@@ -36,7 +42,7 @@ export async function createProject(input: CreateProjectInput): Promise<ProjectW
   // 2. Create persons
   const personInserts = input.person_names.map((name, i) => ({
     project_id: project.id,
-    name: name.trim(),
+    name: toTitleCase(name.trim()),
     order: i,
   }));
 
@@ -107,10 +113,23 @@ export async function getProjectBySlug(slug: string): Promise<ProjectWithRelatio
 
 // ─── Persons ──────────────────────────────────────────────────────────────────
 
+export async function updateProject(id: string, updates: Partial<Project>): Promise<Project> {
+  const { data, error } = await supabase
+    .from('projects')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error || !data) throw new Error(error?.message ?? 'Failed to update project');
+  return data;
+}
+
 export async function upsertPerson(person: UpsertPersonInput): Promise<Person> {
+  const personToSave = { ...person, name: toTitleCase(person.name.trim()) };
   const { data, error } = await supabase
     .from('persons')
-    .upsert(person)
+    .upsert(personToSave)
     .select()
     .single();
 
@@ -129,9 +148,10 @@ export async function upsertItem(
   item: UpsertItemInput,
   participants: ItemParticipant[]
 ): Promise<Item> {
+  const itemToSave = { ...item, name: toTitleCase(item.name.trim()) };
   const { data, error } = await supabase
     .from('items')
-    .upsert({ ...item })
+    .upsert(itemToSave)
     .select()
     .single();
 

@@ -16,7 +16,7 @@ function LandingPageContent() {
   const isDev = process.env.NODE_ENV !== 'production';
 
   const [title, setTitle] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(''); // Initialized empty to prevent SSR mismatch
   const [personsInput, setPersonsInput] = useState('');
   const [history, setHistory] = useState<HistorySummary[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -25,6 +25,9 @@ function LandingPageContent() {
   const [seedingDemo, setSeedingDemo] = useState(false);
 
   useEffect(() => {
+    // Set date to today only on client
+    setDate(new Date().toISOString().split('T')[0]);
+    
     // Load history from DB
     fetchHistorySummaries().then((data) => {
       setHistory(data);
@@ -91,7 +94,7 @@ function LandingPageContent() {
 
   if (seedingDemo) {
     return (
-      <main className="min-h-screen bg-[#EDE9DF] flex flex-col items-center justify-center">
+      <main className="min-h-screen bg-page-bg flex flex-col items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-stamp border-t-transparent rounded-full animate-spin"></div>
           <p className="text-tinta-pudar font-mono">Memuat sample data...</p>
@@ -101,11 +104,11 @@ function LandingPageContent() {
   }
 
   return (
-    <main className={`min-h-screen bg-[#EDE9DF] flex flex-col items-center px-4 py-12 transition-all duration-700 ease-out ${(loadingHistory || history.length === 0) ? 'justify-center lg:py-0' : ''}`}>
+    <main className={`min-h-screen bg-page-bg flex flex-col items-center px-4 py-12 transition-all duration-700 ease-out ${(loadingHistory || history.length === 0) ? 'justify-center lg:py-0' : ''}`}>
       {/* Hero */}
       <div className="text-center mb-10 animate-fade-up w-full max-w-4xl">
         <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-stamp/10 rounded-full border border-stamp/20">
-          <span className="text-stamp text-xs font-mono font-semibold uppercase tracking-widest">SpillTheBill</span>
+          <span className="text-stamp text-xs font-mono font-semibold tracking-widest">SpillTheBill</span>
         </div>
         <h1 className="font-display text-4xl sm:text-5xl font-bold text-tinta leading-tight">
           {t.landing.heading}
@@ -116,10 +119,10 @@ function LandingPageContent() {
       </div>
 
       {/* 2-col at lg: form left | history right (if exists) */}
-      <div className={`w-full max-w-4xl flex gap-6 animate-fade-up transition-all duration-700 ease-out ${(loadingHistory || history.length === 0) ? 'flex-col items-center' : 'flex-col lg:flex-row lg:items-start'}`}>
+      <div className={`w-full max-w-4xl flex gap-6 animate-fade-up transition-all duration-700 ease-out flex-col items-center`}>
 
         {/* Form Card */}
-        <div className={`w-full bg-kertas rounded-3xl border border-tinta/10 shadow-lg p-6 space-y-5 transition-all duration-700 ease-out ${(loadingHistory || history.length === 0) ? 'max-w-md mx-auto' : 'lg:max-w-md lg:flex-shrink-0'}`}>
+        <div className="w-full bg-white/50 backdrop-blur-sm rounded-3xl border border-tinta/10 shadow-lg p-6 space-y-5 transition-all duration-700 ease-out max-w-md mx-auto">
           <Input
             label={t.landing.eventTitleLabel}
             placeholder={t.landing.eventTitlePlaceholder}
@@ -156,8 +159,8 @@ function LandingPageContent() {
             </div>
             <textarea
               id="persons-input"
-              rows={2}
-              placeholder={locale === 'id' ? 'Tulis nama dan gunakan tanda koma (,) untuk peserta selanjutnya' : 'Type names separated by commas (,)'}
+              rows={3}
+              placeholder={locale === 'id' ? 'Contoh: Budi, Sinta, Toni\n(tulis nama peserta dan pisahkan dengan tanda koma (,))' : 'e.g. Budi, Sinta, Toni\n(type participant names separated by commas (,))'}
               value={personsInput}
               onChange={(e) => setPersonsInput(e.target.value)}
               className="w-full border rounded-xl px-3 py-2.5 text-tinta bg-white placeholder:text-tinta-pudar/50 border-tinta/20 focus:outline-none focus:ring-2 focus:ring-stamp/30 focus:border-stamp transition-all duration-150 text-sm resize-none"
@@ -166,13 +169,13 @@ function LandingPageContent() {
           </div>
           {errors.global && <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{errors.global}</p>}
           <Button onClick={handleStart} loading={loading} fullWidth size="lg" id="start-btn">
-            {t.landing.startBtn} →
+            {t.landing.startBtn}!
           </Button>
         </div>
 
         {/* History */}
         {!loadingHistory && history.length > 0 && (
-          <div className="flex-1 min-w-0 w-full mt-8 lg:mt-0 animate-fade-up animate-delay-150">
+          <div className="w-full max-w-md mt-8 animate-fade-up animate-delay-150">
             <h2 className="text-sm font-semibold text-tinta-pudar font-mono uppercase tracking-wide mb-3 px-1">
               Histori Patungan
             </h2>
@@ -230,7 +233,7 @@ function LandingPageContent() {
 
 export default function LandingPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-[#EDE9DF]" />}>
+    <Suspense fallback={<main className="min-h-screen bg-page-bg" />}>
       <LandingPageContent />
     </Suspense>
   );

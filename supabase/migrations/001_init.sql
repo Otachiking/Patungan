@@ -1,4 +1,4 @@
--- PtPtLah — Supabase Database Schema
+-- SpillTheBill — Supabase Database Schema
 -- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/_/sql
 
 -- Enable UUID extension

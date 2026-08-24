@@ -1,5 +1,5 @@
 /**
- * PtPtLah — Calculation Engine
+ * SpillTheBill — Calculation Engine
  *
  * Pure functions with zero side effects.
  * Can be unit-tested independently of UI/DB.

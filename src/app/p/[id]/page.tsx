@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/i18n';
-import { getProject, getStoredEditToken, verifyEditToken, addToHistoryIds } from '@/lib/db';
+import { getProject, getProjectBySlug, getStoredEditToken, verifyEditToken, addToHistoryIds } from '@/lib/db';
 import { calculateSettlementFull } from '@/lib/engine';
 import { ReceiptGallery } from '@/components/ReceiptGallery';
 import type { ProjectWithRelations } from '@/lib/types';
 import { SummaryReceipt } from '@/components/SummaryReceipt';
 import { Button } from '@/components/ui/Button';
+import { Pencil, Link as LinkIcon, Check, CheckCircle, Lock, Paperclip } from 'lucide-react';
 
 export default function SummaryPage() {
   const params = useParams();
@@ -24,13 +25,17 @@ export default function SummaryPage() {
   const [copied, setCopied] = useState(false);
 
   const load = useCallback(async () => {
-    const data = await getProject(id);
+    let data = await getProject(id);
+    if (!data) {
+      data = await getProjectBySlug(id);
+    }
+    
     setProject(data);
 
     if (data) {
-      const token = getStoredEditToken(id);
+      const token = getStoredEditToken(data.id);
       setCanEdit(verifyEditToken(data, token));
-      addToHistoryIds(id); // track visited projects
+      addToHistoryIds(data.id); // track visited projects
       document.title = `SpillTheBill – ${data.title}`;
     }
     setLoading(false);
@@ -72,13 +77,13 @@ export default function SummaryPage() {
   const settlement = calculateSettlementFull(project, project.persons, project.items);
 
   return (
-    <main className="min-h-screen bg-[#EDE9DF] pb-20">
+    <main className="min-h-screen bg-page-bg pb-20">
       {/* Top bar */}
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-3">
           {canEdit ? (
-            <Link href={`/p/${id}/edit`} className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium shrink-0">
-              ← ✏️ Edit Acara
+            <Link href={`/p/${id}/edit`} className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium shrink-0 flex items-center gap-1">
+              ← <Pencil size={14} /> Edit Acara
             </Link>
           ) : (
             <Link href="/" className="text-tinta-pudar hover:text-tinta transition-colors text-sm font-mono font-medium shrink-0">
@@ -92,7 +97,7 @@ export default function SummaryPage() {
             id="copy-link-header-btn"
             className="text-xs"
           >
-            {copied ? `✓ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
+            {copied ? <><Check size={14} className="inline mr-1" /> {t.common.copied}</> : <><LinkIcon size={14} className="inline mr-1" /> {t.common.copyLink}</>}
           </Button>
         </div>
       </header>
@@ -135,7 +140,7 @@ export default function SummaryPage() {
           {/* DOKUMENTASI STRUK */}
           <div className="w-full max-w-[400px] mt-6">
             <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm p-4 w-full">
-              <h2 className="font-display font-semibold text-tinta text-sm mb-3">📎 Dokumentasi Struk</h2>
+              <h2 className="font-display font-semibold text-tinta text-sm mb-3 flex items-center gap-2"><Paperclip size={16} /> Dokumentasi Struk</h2>
               <ReceiptGallery projectId={id} readOnly={true} />
             </div>
           </div>
@@ -148,7 +153,7 @@ export default function SummaryPage() {
               onClick={handleCopyLink}
               id="share-link-btn"
             >
-              {copied ? `✅ ${t.common.copied}` : `🔗 ${t.common.copyLink}`}
+              {copied ? <><CheckCircle size={14} className="inline mr-1" /> {t.common.copied}</> : <><LinkIcon size={14} className="inline mr-1" /> {t.common.copyLink}</>}
             </Button>
 
             {canEdit && !showStamp && (
@@ -159,7 +164,7 @@ export default function SummaryPage() {
                 id="finalize-btn"
                 className="text-tinta-pudar"
               >
-                🔒 {t.summary.finalizeBtn}
+                <Lock size={14} className="inline mr-1" /> {t.summary.finalizeBtn}
               </Button>
             )}
 

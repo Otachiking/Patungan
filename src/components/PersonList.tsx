@@ -7,6 +7,7 @@ import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { PersonBadge } from './ui/PersonBadge';
 import { getInitials, getAvatarColor } from '@/lib/avatar';
+import { Pencil, Trash2, Plus } from 'lucide-react';
 
 interface PersonListProps {
   persons: Person[];
@@ -93,7 +94,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
             onClick={startAddPerson}
             className="text-sm font-semibold text-tinta hover:text-stamp transition-colors flex items-center gap-1"
           >
-            Tambah Peserta <span className="text-lg leading-none">+</span>
+            Tambah Peserta <Plus size={18} />
           </button>
         )}
       </div>
@@ -114,52 +115,52 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
               onMouseLeave={() => setHoveredId(null)}
               onTouchStart={() => setHoveredId(person.id === hoveredId ? null : person.id)}
             >
-              <div 
-                className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm"
-                style={{ backgroundColor: getAvatarColor(i) }}
-              >
-                {getInitials(person.name)}
-              </div>
-              
-              {isEditing ? (
-                <input
-                  className="w-20 text-center text-xs border border-tinta/30 outline-none rounded bg-white text-tinta absolute top-10 md:top-14 z-10 shadow-sm"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleRename(person.id);
-                    if (e.key === 'Escape') setEditingId(null);
-                  }}
-                  onBlur={() => handleRename(person.id)}
-                  autoFocus
-                />
-              ) : (
-                <div className="h-4 flex items-center justify-center w-full relative">
-                  <span className={`text-sm font-medium text-tinta truncate max-w-full absolute transition-opacity duration-150 ${hoveredId === person.id && !readOnly ? 'opacity-0' : 'opacity-100'}`}>
-                    {person.name}
-                  </span>
-                  
+              <div className="shrink-0 basis-[70px] flex flex-col items-center gap-2 relative">
+                <div
+                  className="group/avatar relative w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm ring-2 ring-transparent transition-all cursor-pointer overflow-hidden"
+                  style={{ backgroundColor: getAvatarColor(i) }}
+                  title={person.name}
+                >
+                  {getInitials(person.name)}
                   {!readOnly && (
-                    <div className={`flex items-center gap-1 text-xs text-tinta-pudar transition-opacity absolute ${hoveredId === person.id ? 'opacity-100' : 'opacity-0'}`}>
-                      <button 
-                        onClick={() => { setEditingId(person.id); setEditName(person.name); }}
-                        className="hover:text-tinta transition-colors"
-                        title={t.common.edit}
-                      >
-                        ✏️
-                      </button>
-                      <span className="text-[10px] text-tinta/20">|</span>
-                      <button 
-                        onClick={() => handleDeleteWithWarning(person)}
-                        className="hover:text-red-500 transition-colors"
-                        title={t.common.delete}
-                      >
-                        🗑️
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleDeleteWithWarning(person)}
+                      className="absolute inset-0 bg-red-500/90 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity text-white"
+                      title={t.common.delete}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   )}
                 </div>
-              )}
+                
+                {isEditing ? (
+                  <input
+                    className="w-[120%] -ml-[10%] text-center text-[10px] md:text-xs border border-tinta/30 outline-none rounded bg-white text-tinta shadow-sm absolute top-10 md:top-14 z-10 py-0.5"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleRename(person.id);
+                      if (e.key === 'Escape') setEditingId(null);
+                    }}
+                    onBlur={() => handleRename(person.id)}
+                    autoFocus
+                  />
+                ) : (
+                  <div 
+                    className="group/name relative w-full flex justify-center cursor-pointer"
+                    onClick={() => !readOnly && (setEditingId(person.id), setEditName(person.name))}
+                  >
+                    <span className="text-[10px] md:text-xs font-medium text-tinta text-center leading-tight truncate px-1 group-hover/name:opacity-0 transition-opacity">
+                      {person.name}
+                    </span>
+                    {!readOnly && (
+                      <span className="absolute inset-0 flex items-center justify-center text-[10px] md:text-xs font-semibold text-tinta opacity-0 group-hover/name:opacity-100 transition-opacity bg-kertas/80 rounded backdrop-blur-[2px]">
+                        <Pencil size={12} className="mr-0.5"/> Edit
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
@@ -172,7 +173,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
               className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
               title="Tambah Peserta"
             >
-              +
+              <Plus size={24} />
             </button>
             
             {editingId === 'new' ? (

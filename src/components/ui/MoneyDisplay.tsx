@@ -1,4 +1,4 @@
-﻿import { formatRupiahShort } from '@/i18n';
+import { formatRupiahShort } from '@/i18n';
 
 interface MoneyDisplayProps {
   amount: number;
@@ -18,7 +18,7 @@ const sizeStyles = {
 const colorStyles = {
   default: 'text-tinta',
   positive: 'text-lunas',
-  negative: 'text-utang',
+  negative: 'text-red-600',
   muted: 'text-tinta-pudar',
 };
 

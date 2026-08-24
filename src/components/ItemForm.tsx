@@ -6,6 +6,7 @@ import type { Item, ItemParticipant, Person, UpsertItemInput } from '@/lib/types
 import { Button } from './ui/Button';
 import { Input, Select } from './ui/Input';
 import { getInitials, getAvatarColor } from '@/lib/avatar';
+import { Banknote, Users } from 'lucide-react';
 
 interface ItemFormProps {
   persons: Person[];
@@ -217,13 +218,13 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
       </div>
 
       {priceNum > 0 && qtyNum > 1 && (
-        <div className="flex justify-end text-xs text-tinta-pudar font-mono">
+        <div className="flex justify-center text-xs text-tinta-pudar font-mono">
           Subtotal: Rp{itemTotal.toLocaleString('id-ID')}
         </div>
       )}
 
       <Select
-        label={t.editor.paidByLabel}
+        label={<div className="flex items-center gap-1.5 text-sm font-medium text-tinta"><Banknote size={16} /> {t.editor.paidByLabel}</div>}
         options={personOptions}
         value={paidBy}
         onChange={(e) => setPaidBy(e.target.value)}
@@ -233,7 +234,7 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
       {/* Participant checklist */}
       <div id="item-participants-section" className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-tinta">{t.editor.participantsLabel}</label>
+          <label className="text-sm font-medium text-tinta flex items-center gap-1.5"><Users size={16} /> {t.editor.participantsLabel}</label>
           <button
             id="toggle-all-btn"
             type="button"
@@ -308,7 +309,7 @@ export function ItemForm({ persons, initialItem, onSave, onCancel, projectId }: 
 
         {/* Per-person preview */}
         {priceNum > 0 && participants.size > 0 && (
-          <p className="text-xs text-tinta-pudar text-right font-mono">
+          <p className="text-xs text-tinta-pudar text-center font-mono">
             {participants.size} orang ≈ @Rp{perPerson.toLocaleString('id-ID')}
           </p>
         )}

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getReceiptImages, uploadReceiptImage, deleteReceiptImage } from '@/lib/db';
 import type { ReceiptImage } from '@/lib/types';
+import { X, Plus, Paperclip, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Trash2 } from 'lucide-react';
 
 interface ReceiptGalleryProps {
   projectId: string;
@@ -116,7 +117,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
   const hasImages = images.length > 0;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       {errorMsg && (
         <div className="bg-red-50 border border-red-200 text-red-600 text-xs px-3 py-2 rounded-xl flex items-start gap-2">
           <span className="shrink-0 mt-0.5">⚠️</span>
@@ -149,7 +150,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
                   className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/60 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                   title="Hapus foto"
                 >
-                  {deletingId === img.id ? '…' : '✕'}
+                  {deletingId === img.id ? '…' : <X size={12} />}
                 </button>
               )}
             </div>
@@ -162,7 +163,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
               disabled={uploading}
               className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-dashed border-tinta/20 flex flex-col items-center justify-center gap-1 text-tinta-pudar hover:border-stamp/40 hover:text-stamp transition-all duration-150 snap-start"
             >
-              <span className="text-xl">{uploading ? '⏳' : '＋'}</span>
+              <span className="flex items-center justify-center h-7">{uploading ? '⏳' : <Plus size={24} />}</span>
               <span className="text-[10px] font-mono">Foto</span>
             </button>
           )}
@@ -177,7 +178,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
           onClick={() => fileInputRef.current?.click()}
           className="relative border-2 border-dashed border-tinta/20 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-stamp/40 hover:bg-stamp/[0.02] transition-all duration-200 group"
         >
-          <span className="text-3xl">📎</span>
+          <Paperclip size={32} className="text-tinta-pudar" />
           <div className="text-center">
             <p className="text-sm font-medium text-tinta-pudar group-hover:text-tinta transition-colors">
               {uploading ? 'Mengunggah...' : 'Tambah Foto Struk'}
@@ -208,7 +209,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
               className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white text-xl flex items-center justify-center transition-colors z-10"
               onClick={(e) => { e.stopPropagation(); setLightboxIdx(lightboxIdx - 1); }}
             >
-              ‹
+              <ChevronLeft size={24} />
             </button>
           )}
 
@@ -242,10 +243,10 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
             {/* Zoom controls */}
             <div className="absolute bottom-6 right-6 flex flex-col gap-2 z-10" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => setScale(s => Math.min(5, s + 0.25))} className="w-10 h-10 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center text-xl transition-colors">
-                ＋
+                <ZoomIn size={20} />
               </button>
               <button onClick={() => setScale(s => Math.max(0.5, s - 0.25))} className="w-10 h-10 bg-white/10 hover:bg-white/25 text-white rounded-full flex items-center justify-center text-xl transition-colors">
-                −
+                <ZoomOut size={20} />
               </button>
             </div>
 
@@ -257,14 +258,14 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
                   className="w-10 h-10 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-sm flex items-center justify-center transition-colors shadow-lg"
                   title="Hapus"
                 >
-                  🗑
+                  <Trash2 size={18} />
                 </button>
               )}
               <button
                 onClick={() => setLightboxIdx(null)}
                 className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors shadow-lg"
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
             <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 text-xs font-mono bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm z-10">
@@ -278,7 +279,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
               className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white text-xl flex items-center justify-center transition-colors z-10"
               onClick={(e) => { e.stopPropagation(); setLightboxIdx(lightboxIdx + 1); }}
             >
-              ›
+              <ChevronRight size={24} />
             </button>
           )}
         </div>,

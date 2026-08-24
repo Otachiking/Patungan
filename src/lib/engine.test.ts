@@ -1,5 +1,5 @@
 /**
- * Unit tests for the PtPtLah calculation engine.
+ * Unit tests for the SpillTheBill calculation engine.
  * Run with: npx vitest run src/lib/engine.test.ts
  *
  * Test cases (per §13 PROJECT.md):

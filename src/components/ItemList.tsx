@@ -7,6 +7,7 @@ import { MoneyDisplay } from './ui/MoneyDisplay';
 import { Button } from './ui/Button';
 import { getInitials, getAvatarColor } from '@/lib/avatar';
 import { ItemForm } from './ItemForm';
+import { ReceiptText, Pencil, Trash2, Plus, Banknote, Users } from 'lucide-react';
 
 interface ItemListProps {
   items: Item[];
@@ -41,7 +42,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
     <div className="space-y-2">
       {items.length === 0 && !showAddForm && (
         <div className="text-center py-12 text-tinta-pudar">
-          <div className="text-4xl mb-3">🧾</div>
+          <div className="flex justify-center mb-3 text-tinta-pudar/50"><ReceiptText size={48} /></div>
           <p className="text-sm">{t.editor.noItemsYet}</p>
         </div>
       )}
@@ -61,24 +62,27 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
               onClick={() => !readOnly && setEditingId(isEditing ? null : item.id)}
             >
               <div className="flex items-start justify-between gap-3">
-                <span className="font-semibold text-tinta text-base leading-tight">
-                  {item.name}{' '}
-                  {(item.qty ?? 1) > 1 && (
-                    <span className="text-sm font-normal text-tinta-pudar">(x{item.qty})</span>
+                <span className="font-semibold text-tinta text-base leading-tight flex items-center gap-2">
+                  <span>
+                    {item.name}{' '}
+                    {(item.qty ?? 1) > 1 && (
+                      <span className="text-sm font-normal text-tinta-pudar">(x{item.qty})</span>
+                    )}
+                  </span>
+                  {!readOnly && !isEditing && hoveredId === item.id && (
+                    <span className="text-[11px] text-tinta-pudar/50 italic hidden sm:block font-normal mt-0.5"><Pencil size={10} className="inline mr-0.5" />{t.common.edit}</span>
+                  )}
+                  {isEditing && !readOnly && (
+                    <span className="text-[11px] text-stamp/70 font-mono hidden sm:block font-normal mt-0.5">▲ Urungkan</span>
                   )}
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
-                  {!readOnly && !isEditing && hoveredId === item.id && (
-                    <span className="text-[11px] text-tinta-pudar/50 italic hidden sm:block">{t.common.edit}</span>
-                  )}
-                  {isEditing && !readOnly && (
-                    <span className="text-[11px] text-stamp/70 font-mono hidden sm:block">▲ {t.editor.cancelBtn}</span>
-                  )}
                   <MoneyDisplay amount={item.price * (item.qty ?? 1)} size="md" />
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs text-tinta-pudar shrink-0">{t.editor.paidByShort}:</span>
+                <Banknote size={14} className="text-tinta-pudar shrink-0" />
+                <span className="text-xs text-tinta-pudar shrink-0 hidden min-[425px]:inline">{t.editor.paidByShort}:</span>
                 {payer && (
                   <span
                     className="text-[10px] font-bold text-white px-1.5 py-0.5 rounded shadow-sm shrink-0"
@@ -89,7 +93,8 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
                   </span>
                 )}
                 <span className="text-tinta/30 text-xs mx-0.5 shrink-0">|</span>
-                <span className="text-xs text-tinta-pudar shrink-0">{t.editor.sharedByShort}:</span>
+                <Users size={14} className="text-tinta-pudar shrink-0" />
+                <span className="text-xs text-tinta-pudar shrink-0 hidden min-[425px]:inline">{t.editor.sharedByShort}:</span>
                 <div className="flex gap-1 items-center flex-wrap">
                   {item.participants.slice(0, 3).map((p) => {
                     const person = personMap[p.person_id];
@@ -121,10 +126,10 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
 
             {/* Expanded inline edit form — below the header */}
             {isEditing && !readOnly && (
-              <div className="bg-kertas p-4 animate-fade-up">
+              <div className="bg-white/50 backdrop-blur-sm p-4 animate-fade-up">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-display font-semibold text-tinta text-sm uppercase tracking-wide opacity-60">
-                    ✏️ {t.editor.editItemBtn}
+                  <h3 className="font-display font-semibold text-tinta text-sm uppercase tracking-wide opacity-60 flex items-center gap-1">
+                    <Pencil size={14} /> {t.editor.editItemBtn}
                   </h3>
                   <Button
                     size="sm"
@@ -137,7 +142,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
                     loading={deletingId === item.id}
                     className="h-7 py-0 text-xs px-2.5"
                   >
-                    🗑 {t.editor.deleteItemBtn}
+                    <Trash2 size={14} className="mr-1 inline" /> {t.editor.deleteItemBtn}
                   </Button>
                 </div>
                 <ItemForm
@@ -193,7 +198,7 @@ export function ItemList({ items, persons, onSave, onDelete, projectId, readOnly
           }}
           id="add-item-btn"
         >
-          ＋ {t.editor.addItemBtn}
+          <Plus size={16} className="mr-1 inline" /> {t.editor.addItemBtn}
         </Button>
       )}
     </div>

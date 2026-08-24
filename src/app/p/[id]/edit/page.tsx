@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/i18n';
-import { getProject, upsertItem, deleteItem, upsertPerson, deletePerson, getStoredEditToken, verifyEditToken, storeEditToken, removeStoredEditToken } from '@/lib/db';
+import { getProject, getProjectBySlug, upsertItem, deleteItem, upsertPerson, deletePerson, getStoredEditToken, verifyEditToken, storeEditToken, removeStoredEditToken, updateProject } from '@/lib/db';
 import { calculateSettlementFull } from '@/lib/engine';
 import type { Item, ItemParticipant, Person, ProjectWithRelations, UpsertItemInput } from '@/lib/types';
 import { PersonList } from '@/components/PersonList';
@@ -13,9 +13,11 @@ import { ReceiptGallery } from '@/components/ReceiptGallery';
 import { MoneyDisplay } from '@/components/ui/MoneyDisplay';
 import { Button } from '@/components/ui/Button';
 import { ReceiptDivider } from '@/components/ui/ReceiptDivider';
+import { LockKeyhole, House, ReceiptText, CircleDollarSign, CheckCircle, Paperclip, ArrowRight } from 'lucide-react';
 
 export default function EditorPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
   const router = useRouter();
   const { t } = useTranslation();
@@ -25,6 +27,8 @@ export default function EditorPage() {
   const [canEdit, setCanEdit] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
 
   // Dynamic page title
   useEffect(() => {
@@ -58,17 +62,32 @@ export default function EditorPage() {
   }
 
   const load = useCallback(async () => {
-    const data = await getProject(id);
+    let data = await getProject(id);
+    if (!data) {
+      // Try by slug
+      data = await getProjectBySlug(id);
+    }
+    
     if (!data) {
       router.replace('/');
       return;
     }
     setProject(data);
 
-    const token = getStoredEditToken(id);
-    setCanEdit(verifyEditToken(data, token));
+    // Check URL for token first
+    const urlToken = searchParams.get('t');
+    if (urlToken && verifyEditToken(data, urlToken)) {
+      storeEditToken(data.id, urlToken);
+      // Clean up URL to avoid leaving token in address bar
+      router.replace(`/p/${id}/edit`);
+      setCanEdit(true);
+    } else {
+      const token = getStoredEditToken(data.id);
+      setCanEdit(verifyEditToken(data, token));
+    }
+    
     setLoading(false);
-  }, [id, router]);
+  }, [id, router, searchParams]);
 
   useEffect(() => {
     load();
@@ -92,6 +111,16 @@ export default function EditorPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [canEdit]);
+
+  async function handleRenameTitle() {
+    if (!project || !editTitle.trim() || !canEdit) {
+      setIsEditingTitle(false);
+      return;
+    }
+    await updateProject(project.id, { title: editTitle.trim() });
+    setProject({ ...project, title: editTitle.trim() });
+    setIsEditingTitle(false);
+  }
 
   // ─── Item handlers ────────────────────────────────────────────────────────
 
@@ -230,10 +259,10 @@ export default function EditorPage() {
 
   if (!canEdit) {
     return (
-      <main className="min-h-screen bg-[#EDE9DF] flex items-center justify-center p-4">
+      <main className="min-h-screen bg-page-bg flex items-center justify-center p-4">
         <div className="bg-white p-6 rounded-3xl shadow-lg max-w-sm w-full text-center space-y-4 animate-fade-up">
           <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl">
-            🔒
+            <LockKeyhole size={32} />
           </div>
           <h2 className="font-display font-bold text-xl text-tinta">{t.editor.pinModalTitle}</h2>
           <p className="text-sm text-tinta-pudar">{t.editor.pinModalDesc}</p>
@@ -267,23 +296,47 @@ export default function EditorPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#EDE9DF] pb-20">
+    <main className="min-h-screen bg-page-bg pb-20">
       {/* Top bar */}
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Link href="/" className="shrink-0 text-tinta-pudar hover:text-tinta transition-colors" title={t.common.home}>
-              🏠
-            </Link>
-            <h1 className="font-display font-bold text-tinta text-base sm:text-lg leading-tight truncate">
-              {project.title}
-            </h1>
+        <div className="max-w-5xl mx-auto relative flex items-center justify-between min-h-[32px] gap-2">
+          <Link href="/" className="shrink-0 text-tinta-pudar hover:text-tinta transition-colors flex items-center justify-center w-8 h-8 z-10 bg-white/50 backdrop-blur-sm rounded-full border border-tinta/10 hover:bg-white/80" title={t.common.home}>
+            <House size={18} />
+          </Link>
+          
+          <div className="flex-1 min-w-0 text-center px-2 z-0 flex justify-center">
+            {isEditingTitle ? (
+              <input
+                className="font-display font-bold text-tinta text-base sm:text-lg text-center bg-white border border-tinta/20 rounded px-2 py-0.5 outline-none focus:ring-2 focus:ring-stamp max-w-[200px]"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleRenameTitle();
+                  if (e.key === 'Escape') setIsEditingTitle(false);
+                }}
+                onBlur={handleRenameTitle}
+                autoFocus
+              />
+            ) : (
+              <h1 
+                className="font-display font-bold text-tinta text-base sm:text-lg leading-tight truncate cursor-pointer hover:opacity-70 transition-opacity text-center w-full"
+                onClick={() => {
+                  if (!canEdit) return;
+                  setEditTitle(project.title);
+                  setIsEditingTitle(true);
+                }}
+                title={canEdit ? "Edit Nama Acara" : ""}
+              >
+                {project.title}
+              </h1>
+            )}
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+
+          <div className="shrink-0 flex items-center justify-end z-10">
             <Link href={`/p/${id}`}>
               <Button size="sm" id="see-summary-btn" className="text-xs sm:text-sm px-3 sm:px-4">
-                <span className="hidden sm:inline">{t.editor.seeResultBtn} →</span>
-                <span className="sm:hidden">Ringkasan →</span>
+                <span className="hidden sm:inline">{t.editor.seeResultBtn}</span>
+                <span className="sm:hidden">Ringkasan</span>
               </Button>
             </Link>
           </div>
@@ -309,7 +362,7 @@ export default function EditorPage() {
 
           {/* ITEM (Mobile: 2nd, Desktop: Left Col, Span 2 Rows) */}
           <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-5 w-full min-w-0 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            <h2 className="font-display font-semibold text-tinta mb-4">🧾 Item</h2>
+            <h2 className="font-display font-semibold text-tinta mb-4 flex items-center gap-2"><ReceiptText size={18} /> Item</h2>
             <ItemList
               items={visibleItems}
               persons={visiblePersons}
@@ -324,7 +377,7 @@ export default function EditorPage() {
           <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 flex flex-col gap-5 w-full min-w-0 animate-fade-up lg:sticky lg:top-20 self-start" style={{ animationDelay: '0.15s' }}>
             {settlement && visibleItems.length > 0 && (
               <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-4 space-y-2">
-                <h2 className="font-display font-semibold text-tinta mb-2">📊 Preview Total</h2>
+                <h2 className="font-display font-semibold text-tinta mb-2 flex items-center gap-2"><CircleDollarSign size={18} /> Preview Total</h2>
                 <ReceiptDivider />
                 <div className="flex justify-between text-sm text-tinta-pudar">
                   <span className="font-mono uppercase text-xs tracking-wide">Subtotal</span>
@@ -338,7 +391,7 @@ export default function EditorPage() {
 
                 <ReceiptDivider label="Settlement" />
                 {settlement.transactions.length === 0 ? (
-                  <p className="text-xs text-lunas text-center">✅ Tidak ada yang perlu transfer</p>
+                  <p className="text-xs text-lunas flex items-center justify-center gap-1"><CheckCircle size={14} /> Tidak ada yang perlu transfer</p>
                 ) : (
                   <div className="space-y-1">
                     {settlement.transactions.map((txn, i) => {
@@ -346,7 +399,7 @@ export default function EditorPage() {
                       const to = visiblePersons.find((p) => p.id === txn.to_person_id);
                       return (
                         <div key={i} className="flex justify-between text-sm">
-                          <span className="text-tinta">{from?.name} → {to?.name}</span>
+                          <span className="text-tinta flex items-center gap-1">{from?.name} <ArrowRight size={14} className="text-tinta-pudar" /> {to?.name}</span>
                           <MoneyDisplay amount={txn.amount} size="sm" color="negative" />
                         </div>
                       );
@@ -356,8 +409,8 @@ export default function EditorPage() {
 
                 {visibleItems.length > 0 && (
                   <Link href={`/p/${id}`} className="block mt-3">
-                    <Button fullWidth size="sm" id="goto-summary-btn">
-                      {t.editor.seeResultBtn} →
+                    <Button fullWidth size="md" id="goto-summary-btn">
+                      {t.editor.seeResultBtn}
                     </Button>
                   </Link>
                 )}
@@ -366,7 +419,7 @@ export default function EditorPage() {
 
             {/* GALLERY */}
             <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm p-4 w-full">
-              <h2 className="font-display font-semibold text-tinta text-sm mb-3">📎 Dokumentasi Struk</h2>
+              <h2 className="font-display font-semibold text-tinta text-sm mb-3 flex items-center gap-2"><Paperclip size={16} /> Dokumentasi Struk</h2>
               <ReceiptGallery projectId={id} readOnly={!canEdit} />
             </div>
           </div>

@@ -5,6 +5,7 @@ import type { Item, Person, PersonBalance, Transaction } from '@/lib/types';
 import { MoneyDisplay } from './ui/MoneyDisplay';
 import { PersonBadge } from './ui/PersonBadge';
 import { ReceiptDivider, SectionHeader } from './ui/ReceiptDivider';
+import { ArrowRight, ArrowBigUp, ArrowBigDown } from 'lucide-react';
 
 interface SettlementListProps {
   transactions: Transaction[];
@@ -38,11 +39,11 @@ export function SettlementList({ transactions, persons }: SettlementListProps) {
             className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-tinta/10"
           >
             <div className="flex-1 flex flex-wrap items-center gap-2">
-              {from && <PersonBadge name={from.name} index={fromIdx} size="sm" />}
-              <span className="text-tinta-pudar text-sm">→</span>
-              {to && <PersonBadge name={to.name} index={toIdx} size="sm" />}
+              {from && <PersonBadge name={from.name} index={fromIdx} size="md" showName={false} />}
+              <ArrowRight size={16} className="text-tinta-pudar" />
+              {to && <PersonBadge name={to.name} index={toIdx} size="md" showName={false} />}
             </div>
-            <MoneyDisplay amount={txn.amount} size="lg" color="negative" className="font-bold" />
+            <MoneyDisplay amount={txn.amount} size="lg" color="default" className="font-bold" />
           </div>
         );
       })}
@@ -93,7 +94,7 @@ export function SummaryReceipt({
 
       {/* Header */}
       <div className="text-center mb-5 relative">
-        <p className="text-xs font-mono uppercase tracking-[0.2em] text-tinta-pudar mb-1">SpillTheBill</p>
+        <p className="text-xs font-mono tracking-[0.2em] text-tinta-pudar mb-1">SpillTheBill</p>
         <h1 className="text-xl font-display font-bold text-tinta leading-snug">{title}</h1>
         <p className="text-xs font-mono text-tinta-pudar mt-1">
           {new Date(date + 'T00:00:00').toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
@@ -116,7 +117,9 @@ export function SummaryReceipt({
           return (
             <div key={item.id} className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-tinta font-medium truncate">{item.name}</p>
+                <p className="text-sm text-tinta font-medium truncate">
+                  {item.name} {(item.qty ?? 1) > 1 && <span className="text-xs text-tinta-pudar font-normal">(x{item.qty})</span>}
+                </p>
                 <p className="text-xs text-tinta-pudar">
                   {t.editor.paidByShort}: {payer?.name}
                 </p>
@@ -156,15 +159,15 @@ export function SummaryReceipt({
               <div className="flex items-center justify-between">
                 <PersonBadge name={person.name} index={idx} />
                 <span
-                  className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full ${
+                  className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
                     isCreditor
                       ? 'bg-lunas/10 text-lunas'
                       : isDebtor
-                      ? 'bg-utang/10 text-utang'
+                      ? 'bg-red-50 text-red-600'
                       : 'bg-tinta/10 text-tinta'
                   }`}
                 >
-                  {isCreditor ? t.summary.receiveLabel : isDebtor ? t.summary.payLabel : t.summary.settledLabel}
+                  {isCreditor ? <><ArrowBigUp size={14}/> {t.summary.receiveLabel}</> : isDebtor ? <><ArrowBigDown size={14}/> {t.summary.payLabel}</> : t.summary.settledLabel}
                 </span>
               </div>
 
