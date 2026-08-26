@@ -97,12 +97,7 @@ export function SummaryReceipt({
         <p className="text-xs font-mono tracking-[0.2em] text-tinta-pudar mb-1">SpillTheBill</p>
         <h1 className="text-xl font-display font-bold text-tinta leading-snug">{title}</h1>
         <p className="text-xs font-mono text-tinta-pudar mt-1">
-          {new Date(date + 'T00:00:00').toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
+          {new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-')}
         </p>
       </div>
 
@@ -127,7 +122,9 @@ export function SummaryReceipt({
               <div className="text-right shrink-0">
                 <p className="text-sm font-mono font-medium text-tinta">Rp{totalPrice.toLocaleString('id-ID')}</p>
                 {item.participants.length > 0 && (
-                  <p className="text-[11px] text-tinta-pudar">{t.summary.nPeople.replace('{n}', String(item.participants.length))}</p>
+                  <p className="text-[11px] text-tinta-pudar">
+                    Rp{Math.round(totalPrice / item.participants.length).toLocaleString('id-ID')} × {item.participants.length}
+                  </p>
                 )}
               </div>
             </div>

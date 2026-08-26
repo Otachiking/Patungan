@@ -1,6 +1,6 @@
 {
-  "name": "spill-the-bill",
-  "version": "0.1.0",
+  "name": "spillthebill",
+  "version": "1.5.2",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -10,8 +10,8 @@ const id = {
 
   // ─── Landing page ─────────────────────────────────────────────────────────
   landing: {
-    heading: 'Hitung Patungan, Beres.',
-    subheading: 'Bukan dibagi rata — siapa pesan apa, dihitung dari situ.',
+    heading: 'Patungan Adil, Gak Pake Ribet.',
+    subheading: 'Bayar sesuai yang kamu pesan. Itungan adil, no drama.',
     createBtn: 'Buat Acara Baru',
     eventTitleLabel: 'Nama Acara',
     eventTitlePlaceholder: 'Contoh: Makan Siang di Warung Pak Budi',
@@ -39,7 +39,7 @@ const id = {
     itemPriceLabel: 'Harga Satuan',
     itemPricePlaceholder: '0',
     paidByLabel: 'Dibayarkan oleh',
-    paidByShort: 'Dibayarkan',
+    paidByShort: 'Dibayar',
     sharedByShort: 'Dibebankan',
     perPersonShort: 'orang',
     participantsLabel: 'Dibebankan kepada',
@@ -60,6 +60,11 @@ const id = {
     pinModalPlaceholder: 'PIN (4 angka)',
     pinModalSubmit: 'Buka Kunci',
     pinModalError: 'PIN salah. Coba lagi.',
+    documentation: 'Dokumentasi',
+    photo: 'Foto',
+    addReceiptPhoto: 'Tambah Foto Struk',
+    uploadPhotoDesc: 'Klik atau drag & drop · JPG, PNG, HEIC',
+    uploading: 'Mengunggah...',
   },
 
   // ─── Summary / Settlement page ────────────────────────────────────────────

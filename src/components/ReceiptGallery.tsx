@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from '@/i18n';
 import { getReceiptImages, uploadReceiptImage, deleteReceiptImage } from '@/lib/db';
 import type { ReceiptImage } from '@/lib/types';
 import { X, Plus, Paperclip, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Trash2 } from 'lucide-react';
@@ -12,6 +13,7 @@ interface ReceiptGalleryProps {
 }
 
 export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryProps) {
+  const { t } = useTranslation();
   const [images, setImages] = useState<ReceiptImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -164,7 +166,7 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
               className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-dashed border-tinta/20 flex flex-col items-center justify-center gap-1 text-tinta-pudar hover:border-stamp/40 hover:text-stamp transition-all duration-150 snap-start"
             >
               <span className="flex items-center justify-center h-7">{uploading ? '⏳' : <Plus size={24} />}</span>
-              <span className="text-[10px] font-mono">Foto</span>
+              <span className="text-[10px] font-mono">{t.editor.photo}</span>
             </button>
           )}
         </div>
@@ -181,9 +183,9 @@ export function ReceiptGallery({ projectId, readOnly = false }: ReceiptGalleryPr
           <Paperclip size={32} className="text-tinta-pudar" />
           <div className="text-center">
             <p className="text-sm font-medium text-tinta-pudar group-hover:text-tinta transition-colors">
-              {uploading ? 'Mengunggah...' : 'Tambah Foto Struk'}
+              {uploading ? t.editor.uploading : t.editor.addReceiptPhoto}
             </p>
-            <p className="text-xs text-tinta-pudar/60 mt-0.5">Klik atau drag & drop · JPG, PNG, HEIC</p>
+            <p className="text-xs text-tinta-pudar/60 mt-0.5">{t.editor.uploadPhotoDesc}</p>
           </div>
         </div>
       )}

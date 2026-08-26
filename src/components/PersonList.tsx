@@ -94,7 +94,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
             onClick={startAddPerson}
             className="text-sm font-semibold text-tinta hover:text-stamp transition-colors flex items-center gap-1"
           >
-            Tambah Peserta <Plus size={18} />
+            {t.editor.addPersonBtn} <Plus size={18} />
           </button>
         )}
       </div>
@@ -110,14 +110,14 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
           return (
             <div 
               key={person.id}
-              className="group shrink-0 flex flex-col items-center gap-2 snap-center relative w-12 md:w-16"
+              className="group shrink-0 flex flex-col items-center gap-2 snap-center relative w-16 md:w-20"
               onMouseEnter={() => setHoveredId(person.id)}
               onMouseLeave={() => setHoveredId(null)}
               onTouchStart={() => setHoveredId(person.id === hoveredId ? null : person.id)}
             >
               <div className="shrink-0 basis-[70px] flex flex-col items-center gap-2 relative">
                 <div
-                  className="group/avatar relative w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm ring-2 ring-transparent transition-all cursor-pointer overflow-hidden"
+                  className="group/avatar relative w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm ring-2 ring-transparent transition-all cursor-pointer overflow-hidden"
                   style={{ backgroundColor: getAvatarColor(i) }}
                   title={person.name}
                 >
@@ -150,7 +150,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
                     className="group/name relative w-full flex justify-center cursor-pointer"
                     onClick={() => !readOnly && (setEditingId(person.id), setEditName(person.name))}
                   >
-                    <span className="text-[10px] md:text-xs font-medium text-tinta text-center leading-tight truncate px-1 group-hover/name:opacity-0 transition-opacity">
+                    <span className="text-[10px] md:text-xs font-medium text-tinta text-center leading-tight truncate px-1 max-w-full group-hover/name:opacity-0 transition-opacity">
                       {person.name}
                     </span>
                     {!readOnly && (
@@ -167,11 +167,11 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
 
         {/* Add New Button */}
         {!readOnly && (
-          <div className="shrink-0 flex flex-col items-center gap-2 snap-center relative w-12 md:w-16">
+          <div className="shrink-0 flex flex-col items-center gap-2 snap-center relative w-16 md:w-20">
             <button
               onClick={startAddPerson}
-              className="w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
-              title="Tambah Peserta"
+              className="w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
+              title={t.editor.addPersonBtn}
             >
               <Plus size={24} />
             </button>
@@ -191,8 +191,8 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
               />
             ) : (
               <div className="h-4 flex items-center justify-center w-full cursor-pointer hover:opacity-70 transition-opacity" onClick={startAddPerson}>
-                <span className="text-xs md:text-sm font-medium text-tinta/40 truncate max-w-full">
-                  Tambah
+                <span className="text-[10px] md:text-xs font-medium text-tinta/40 truncate max-w-full">
+                  {t.editor.addPersonBtn.split(' ')[0]} {/* Extract 'Tambah' or 'Add' */}
                 </span>
               </div>
             )}

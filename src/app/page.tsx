@@ -191,9 +191,9 @@ function LandingPageContent() {
                         <p className="font-semibold text-tinta text-sm truncate">{entry.title}</p>
                         <p className="text-xs text-tinta-pudar font-mono mt-0.5">
                           {new Date(entry.date + 'T00:00:00').toLocaleDateString(
-                            locale === 'id' ? 'id-ID' : 'en-US',
+                            'en-GB',
                             { day: '2-digit', month: 'short', year: 'numeric' }
-                          ).replace(/ /g, '/')}
+                          ).replace(/ /g, '-')}
                           {' · '}
                           {entry.personCount} {t.history.persons}
                           {entry.itemCount > 0 ? ` · ${entry.itemCount} ${t.history.items}` : ''}
@@ -216,7 +216,7 @@ function LandingPageContent() {
       <div className="mt-10 text-center space-y-1">
         <p className="text-xs text-tinta-pudar font-mono opacity-70">{t.footer.tagline}</p>
         <p className="text-xs text-tinta-pudar font-mono opacity-40">
-          ©2026 SpillTheBill by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
+          SpillTheBill v1.5.2 ©2026 by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
         </p>
         {isDev && (
           <Link

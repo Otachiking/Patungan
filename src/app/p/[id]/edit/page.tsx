@@ -417,7 +417,7 @@ export default function EditorPage() {
 
             {/* GALLERY */}
             <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm p-4 w-full">
-              <h2 className="font-display font-semibold text-tinta text-sm mb-3 flex items-center gap-2"><Paperclip size={16} /> Dokumentasi Struk</h2>
+              <h2 className="font-display font-semibold text-tinta text-sm mb-3 flex items-center gap-2"><Paperclip size={16} /> {t.editor.documentation}</h2>
               <ReceiptGallery projectId={id} readOnly={!canEdit} />
             </div>
           </div>
@@ -428,7 +428,7 @@ export default function EditorPage() {
       {/* Footer */}
       <div className="max-w-5xl mx-auto px-4 pb-6 text-center">
         <p className="text-xs font-mono text-tinta-pudar opacity-40">
-          ©2026 SpillTheBill by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
+          SpillTheBill v1.5.2 ©2026 by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
         </p>
       </div>
 

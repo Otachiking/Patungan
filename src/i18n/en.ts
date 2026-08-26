@@ -8,8 +8,8 @@ const en = {
   appTagline: 'Item-level bill splitting, fair & transparent',
 
   landing: {
-    heading: 'Split the Bill, Done.',
-    subheading: 'Not split equally — who ordered what, calculated from there.',
+    heading: 'Splitting bills made easier.',
+    subheading: 'Pay only for what you ordered. Fair math, less drama.',
     createBtn: 'Create New Event',
     eventTitleLabel: 'Event Name',
     eventTitlePlaceholder: "e.g. Lunch at Pak Budi's",
@@ -57,6 +57,11 @@ const en = {
     pinModalPlaceholder: 'PIN (4 digits)',
     pinModalSubmit: 'Unlock',
     pinModalError: 'Incorrect PIN. Please try again.',
+    documentation: 'Documentation',
+    photo: 'Photo',
+    addReceiptPhoto: 'Add Receipt Photo',
+    uploadPhotoDesc: 'Click or drag & drop · JPG, PNG, HEIC',
+    uploading: 'Uploading...',
   },
 
   summary: {
