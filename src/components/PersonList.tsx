@@ -102,7 +102,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
       {/* List */}
       <div 
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto px-5 pb-5 pt-5 scrollbar-hide snap-x"
+        className="flex gap-1 overflow-x-auto px-5 pb-5 pt-5 scrollbar-hide snap-x"
       >
         {persons.map((person, i) => {
           const isEditing = editingId === person.id;

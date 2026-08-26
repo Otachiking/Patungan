@@ -113,7 +113,7 @@ function LandingPageContent() {
         <h1 className="font-display text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold text-tinta leading-tight">
           {t.landing.heading}
         </h1>
-        <p className="mt-3 text-tinta-pudar text-base sm:text-lg max-w-sm mx-auto leading-relaxed">
+        <p className="mt-3 text-tinta-pudar text-base sm:text-lg max-w-sm mx-auto leading-relaxed whitespace-pre-line">
           {t.landing.subheading}
         </p>
       </div>

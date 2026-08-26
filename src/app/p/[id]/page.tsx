@@ -149,25 +149,27 @@ export default function SummaryPage() {
 
           {/* Action buttons */}
           <div className="w-full max-w-[400px] mt-6 px-1 flex flex-col gap-3 pb-10">
-            <Button
-              variant="secondary"
-              fullWidth
-              onClick={handleCopyLink}
-              id="share-link-btn"
-            >
-              {copied ? <><CheckCircle size={14} className="inline mr-1" /> {t.common.copied}</> : <><LinkIcon size={14} className="inline mr-1" /> {t.common.copyLink}</>}
-            </Button>
-
-            <Link href={`/p/${id}/edit`} className="w-full block">
+            <div className="grid grid-cols-2 gap-3 w-full">
+              <Link href={`/p/${id}/edit`} className="w-full block">
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  id="bottom-edit-btn"
+                  className="bg-white"
+                >
+                  <Pencil size={14} className="inline mr-1" /> {t.summary.editBtn}
+                </Button>
+              </Link>
               <Button
-                variant="ghost"
+                variant="secondary"
                 fullWidth
-                id="bottom-edit-btn"
-                className="text-tinta-pudar"
+                onClick={handleCopyLink}
+                id="share-link-btn"
+                className="bg-white"
               >
-                <Pencil size={14} className="inline mr-1" /> {t.summary.editBtn}
+                {copied ? <><CheckCircle size={14} className="inline mr-1" /> {t.common.copied}</> : <><LinkIcon size={14} className="inline mr-1" /> {t.common.copyLink}</>}
               </Button>
-            </Link>
+            </div>
 
             {canEdit && !showStamp && (
               <Button

@@ -9,7 +9,7 @@ const en = {
 
   landing: {
     heading: 'Splitting bills made easier.',
-    subheading: 'Pay only for what you ordered. Fair math, less drama.',
+    subheading: 'Pay only for what you ordered.\nFair math, less drama.',
     createBtn: 'Create New Event',
     eventTitleLabel: 'Event Name',
     eventTitlePlaceholder: "e.g. Lunch at Pak Budi's",

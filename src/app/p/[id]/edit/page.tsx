@@ -298,8 +298,9 @@ export default function EditorPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-20 bg-kertas/90 backdrop-blur-sm border-b border-tinta/10 px-4 py-3">
         <div className="max-w-5xl mx-auto relative flex items-center justify-between min-h-[32px] gap-2">
-          <Link href="/" className="shrink-0 text-tinta-pudar hover:text-tinta transition-colors flex items-center justify-center w-8 h-8 z-10 bg-white/50 backdrop-blur-sm rounded-full border border-tinta/10 hover:bg-white/80" title={t.common.home}>
+          <Link href="/" className="shrink-0 text-tinta-pudar hover:text-tinta transition-colors flex items-center justify-center h-8 px-2.5 sm:px-3 z-10 bg-white/50 backdrop-blur-sm rounded-full border border-tinta/10 hover:bg-white/80 gap-1.5" title={t.common.home}>
             <House size={18} />
+            <span className="hidden sm:inline text-xs font-medium font-body">{t.common.home}</span>
           </Link>
           
           <div className="flex-1 min-w-0 text-center px-2 z-0 flex justify-center">

@@ -11,7 +11,7 @@ const id = {
   // ─── Landing page ─────────────────────────────────────────────────────────
   landing: {
     heading: 'Patungan jadi lebih mudah',
-    subheading: 'Bayar sesuai yang kamu pesan. Itungan adil, no drama.',
+    subheading: 'Bayar sesuai yang kamu pesan.\nItungan adil, no drama.',
     createBtn: 'Buat Acara Baru',
     eventTitleLabel: 'Nama Acara',
     eventTitlePlaceholder: 'Contoh: Makan Siang di Warung Pak Budi',
