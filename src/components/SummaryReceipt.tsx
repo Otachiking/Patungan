@@ -39,9 +39,9 @@ export function SettlementList({ transactions, persons }: SettlementListProps) {
             className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-tinta/10"
           >
             <div className="flex-1 flex flex-wrap items-center gap-2">
-              {from && <PersonBadge name={from.name} index={fromIdx} size="md" showName={false} />}
+              {from && <PersonBadge name={from.name} index={fromIdx} size="md" />}
               <ArrowRight size={16} className="text-tinta-pudar" />
-              {to && <PersonBadge name={to.name} index={toIdx} size="md" showName={false} />}
+              {to && <PersonBadge name={to.name} index={toIdx} size="md" />}
             </div>
             <MoneyDisplay amount={txn.amount} size="lg" color="default" className="font-bold" />
           </div>

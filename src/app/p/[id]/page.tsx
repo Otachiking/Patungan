@@ -182,7 +182,7 @@ export default function SummaryPage() {
             )}
 
             {/* SpillTheBill watermark footer */}
-            <p className="text-center text-xs font-mono text-tinta-pudar opacity-40 pt-2">
+            <p className="text-center text-xs font-mono text-tinta-pudar opacity-70 pt-2">
               SpillTheBill v1.5.2 ©2026 by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
             </p>
           </div>

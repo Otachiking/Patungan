@@ -110,7 +110,7 @@ function LandingPageContent() {
         <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-stamp/10 rounded-full border border-stamp/20">
           <span className="text-stamp text-xs font-mono font-semibold tracking-widest">SpillTheBill</span>
         </div>
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-tinta leading-tight">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold text-tinta leading-tight">
           {t.landing.heading}
         </h1>
         <p className="mt-3 text-tinta-pudar text-base sm:text-lg max-w-sm mx-auto leading-relaxed">
@@ -183,7 +183,7 @@ function LandingPageContent() {
                 {history.map((entry) => (
                   <Link
                     key={entry.id}
-                    href={`/p/${entry.id}`}
+                    href={`/p/${entry.id}/edit`}
                     className="block bg-kertas rounded-2xl border border-tinta/10 hover:border-tinta/25 hover:shadow-sm transition-all duration-150 px-4 py-3"
                   >
                     <div className="flex items-center justify-between gap-3">
@@ -215,7 +215,7 @@ function LandingPageContent() {
       {/* Footer */}
       <div className="mt-10 text-center space-y-1">
         <p className="text-xs text-tinta-pudar font-mono opacity-70">{t.footer.tagline}</p>
-        <p className="text-xs text-tinta-pudar font-mono opacity-40">
+        <p className="text-xs text-tinta-pudar font-mono opacity-70">
           SpillTheBill v1.5.2 ©2026 by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
         </p>
         {isDev && (

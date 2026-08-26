@@ -117,7 +117,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
             >
               <div className="shrink-0 basis-[70px] flex flex-col items-center gap-2 relative">
                 <div
-                  className="group/avatar relative w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm ring-2 ring-transparent transition-all cursor-pointer overflow-hidden"
+                  className="group/avatar relative w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-xl text-white shadow-sm ring-2 ring-transparent transition-all cursor-pointer overflow-hidden"
                   style={{ backgroundColor: getAvatarColor(i) }}
                   title={person.name}
                 >
@@ -170,7 +170,7 @@ export function PersonList({ persons, items = [], onAdd, onDelete, onRename, rea
           <div className="shrink-0 flex flex-col items-center gap-2 snap-center relative w-16 md:w-20">
             <button
               onClick={startAddPerson}
-              className="w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-2xl text-tinta bg-black/5 shadow-sm hover:bg-black/10 transition-colors"
               title={t.editor.addPersonBtn}
             >
               <Plus size={24} />

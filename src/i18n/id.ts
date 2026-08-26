@@ -10,7 +10,7 @@ const id = {
 
   // ─── Landing page ─────────────────────────────────────────────────────────
   landing: {
-    heading: 'Patungan Adil, Gak Pake Ribet.',
+    heading: 'Patungan jadi lebih mudah',
     subheading: 'Bayar sesuai yang kamu pesan. Itungan adil, no drama.',
     createBtn: 'Buat Acara Baru',
     eventTitleLabel: 'Nama Acara',

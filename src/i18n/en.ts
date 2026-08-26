@@ -51,7 +51,7 @@ const en = {
     subtotalRow: 'Subtotal',
     totalRow: 'Total',
     personSectionTitle: 'Participants',
-    addPersonBtn: 'Add Participant',
+    addPersonBtn: 'Add Person',
     pinModalTitle: 'Edit Access Locked',
     pinModalDesc: 'Enter the 4-digit PIN to edit this order.',
     pinModalPlaceholder: 'PIN (4 digits)',

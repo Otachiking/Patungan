@@ -377,12 +377,7 @@ export default function EditorPage() {
               <div className="bg-kertas rounded-2xl border border-tinta/10 shadow-sm px-5 py-4 space-y-2">
                 <h2 className="font-display font-semibold text-tinta mb-2 flex items-center gap-2"><CircleDollarSign size={18} /> Preview Total</h2>
                 <ReceiptDivider />
-                <div className="flex justify-between text-sm text-tinta-pudar">
-                  <span className="font-mono uppercase text-xs tracking-wide">Subtotal</span>
-                  <MoneyDisplay amount={subtotal} size="sm" color="muted" />
-                </div>
-
-                <div className="flex justify-between items-center pt-2 border-t border-dashed border-tinta/15">
+                <div className="flex justify-between items-center pt-2">
                   <span className="font-mono uppercase text-sm tracking-wide font-bold text-tinta">Total</span>
                   <MoneyDisplay amount={settlement.total_expense} size="lg" className="font-bold" />
                 </div>
@@ -427,7 +422,7 @@ export default function EditorPage() {
 
       {/* Footer */}
       <div className="max-w-5xl mx-auto px-4 pb-6 text-center">
-        <p className="text-xs font-mono text-tinta-pudar opacity-40">
+        <p className="text-xs font-mono text-tinta-pudar opacity-70">
           SpillTheBill v1.5.2 ©2026 by <a href="https://instagram.com/otachiking" target="_blank" rel="noopener noreferrer" className="underline">Otachiking</a>
         </p>
       </div>
